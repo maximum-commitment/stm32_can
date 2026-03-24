@@ -28,6 +28,4 @@ Drivers/BSP/Components \
 Drivers/BSP/STM32F4_DISCO \
 Drivers/CMSIS \
 Drivers/STM32F4xx_HAL_Drivers \
-Middlewares/STM32_USBD_Library/Class/HID \
-Middlewares/STM32_USBD_Library/Core \
 

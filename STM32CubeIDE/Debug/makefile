@@ -9,8 +9,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include Middlewares/STM32_USBD_Library/Core/subdir.mk
--include Middlewares/STM32_USBD_Library/Class/HID/subdir.mk
 -include Drivers/STM32F4xx_HAL_Drivers/subdir.mk
 -include Drivers/CMSIS/subdir.mk
 -include Drivers/BSP/STM32F4_DISCO/subdir.mk

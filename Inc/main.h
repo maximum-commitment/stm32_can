@@ -24,10 +24,6 @@
 #include "stm32f4_discovery.h"
 #include "stm32f4_discovery_accelerometer.h"
 
-#include "usbd_core.h"
-#include "usbd_desc.h"
-#include "usbd_hid.h" 
-
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/

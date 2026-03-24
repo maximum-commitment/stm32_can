@@ -38,17 +38,7 @@ Application/User/main.o: \
  ../../Drivers/BSP/STM32F4-Discovery/../Components/lis302dl/lis302dl.h \
  ../../Drivers/BSP/STM32F4-Discovery/../Components/lis302dl/../Common/accelero.h \
  ../../Drivers/BSP/STM32F4-Discovery/../Components/lis3dsh/lis3dsh.h \
- ../../Drivers/BSP/STM32F4-Discovery/../Components/lis3dsh/../Common/accelero.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
- ../../Inc/usbd_conf.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- ../../Inc/usbd_desc.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/usbd_hid.h \
- ../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h
+ ../../Drivers/BSP/STM32F4-Discovery/../Components/lis3dsh/../Common/accelero.h
 ../../Inc/main.h:
 ../../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../../Inc/stm32f4xx_hal_conf.h:
@@ -89,13 +79,3 @@ Application/User/main.o: \
 ../../Drivers/BSP/STM32F4-Discovery/../Components/lis302dl/../Common/accelero.h:
 ../../Drivers/BSP/STM32F4-Discovery/../Components/lis3dsh/lis3dsh.h:
 ../../Drivers/BSP/STM32F4-Discovery/../Components/lis3dsh/../Common/accelero.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
-../../Inc/usbd_conf.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-../../Inc/usbd_desc.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc/usbd_hid.h:
-../../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:

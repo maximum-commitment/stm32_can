@@ -53,9 +53,6 @@ int16_t Buffer[3];
 /* MEMS thresholds {Low/High} */
 static int16_t ThreadholdAcceleroLow = -110, ThreadholdAcceleroHigh = 110;
 
-/* Variables used for USB */
-USBD_HandleTypeDef  hUSBDDevice;
-
 /* Variables used for timer */
 uint16_t PrescalerValue = 0;
 TIM_HandleTypeDef htim4;
@@ -66,10 +63,8 @@ uint8_t Counter  = 0x00;
 __IO uint16_t MaxAcceleration = 0;
 
 /* Private function prototypes -----------------------------------------------*/
-static uint32_t Demo_USBConfig(void);
 static void TIM4_Config(void);
 static void Demo_Exec(void);
-static uint8_t *USBD_HID_GetPos (void);
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
@@ -192,9 +187,8 @@ static void Demo_Exec(void)
   
     DemoEnterCondition = 0x01; 
     
-    /* USB configuration */
-    Demo_USBConfig();
-    
+
+
     /* Waiting USER Button is pressed */
     while (UserButtonPressed == 0x00)
     {}
@@ -202,35 +196,13 @@ static void Demo_Exec(void)
     /* Waiting USER Button is Released */
     while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
     {}
-    
-    /* Disconnect the USB device */
-    USBD_Stop(&hUSBDDevice);
-    USBD_DeInit(&hUSBDDevice);
+
     if(HAL_TIM_PWM_DeInit(&htim4) != HAL_OK)
     {
       /* Initialization Error */
       Error_Handler();
     }
   }
-}
-
-/**
-  * @brief  Initializes the USB for the demonstration application.
-  * @param  None
-  * @retval None
-  */
-static uint32_t Demo_USBConfig(void)
-{
-  /* Init Device Library */
-  USBD_Init(&hUSBDDevice, &HID_Desc, 0);
-  
-  /* Add Supported Class */
-  USBD_RegisterClass(&hUSBDDevice, USBD_HID_CLASS);
-  
-  /* Start Device Process */
-  USBD_Start(&hUSBDDevice);
-  
-  return 0;
 }
 
 /**
@@ -328,13 +300,6 @@ void HAL_SYSTICK_Callback(void)
   
  if (DemoEnterCondition != 0x00)
   {
-    buf = USBD_HID_GetPos();
-    if((buf[1] != 0) ||(buf[2] != 0))
-    {
-      USBD_HID_SendReport (&hUSBDDevice, 
-                           buf,
-                           4);
-    } 
     Counter ++;
     if (Counter == 10)
     {
@@ -444,41 +409,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   {
     UserButtonPressed = 0x01;
   }
-}
-
-/**
-* @brief  USBD_HID_GetPos
-* @param  None
-* @retval Pointer to report
-*/
-static uint8_t *USBD_HID_GetPos (void)
-{
-  static uint8_t HID_Buffer[4] = {0};
-  
-  HID_Buffer[1] = 0;
-  HID_Buffer[2] = 0;
-  /* LEFT Direction */
-  if((X_Offset) < ThreadholdAcceleroLow)
-  {
-    HID_Buffer[1] -= CURSOR_STEP;
-  }
-  /* RIGHT Direction */ 
-  if((X_Offset) > ThreadholdAcceleroHigh)
-  {
-   HID_Buffer[1] += CURSOR_STEP;
-  } 
-  /* DOWN Direction */
-  if((Y_Offset) < ThreadholdAcceleroLow)
-  {
-    HID_Buffer[2] += CURSOR_STEP;
-  }
-  /* UP Direction */ 
-  if((Y_Offset) > ThreadholdAcceleroHigh)
-  {
-    HID_Buffer[2] -= CURSOR_STEP;
-  } 
-  
-  return HID_Buffer;
 }
 
 /**

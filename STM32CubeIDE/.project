@@ -286,25 +286,5 @@
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c</locationURI>
 		</link>
-		<link>
-			<name>Middlewares/STM32_USBD_Library/Core/usbd_core.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_USBD_Library/Core/usbd_ctlreq.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_USBD_Library/Core/usbd_ioreq.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_USBD_Library/Class/HID/usbd_hid.c</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Middlewares/ST/STM32_USB_Device_Library/Class/HID/Src/usbd_hid.c</locationURI>
-		</link>
 	</linkedResources>
 </projectDescription>

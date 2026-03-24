@@ -1,7 +1,0 @@
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:164:12:USBD_HID_DeviceDescriptor	1
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:177:12:USBD_HID_LangIDStrDescriptor	1
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:191:12:USBD_HID_ProductStrDescriptor	2
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:211:12:USBD_HID_ManufacturerStrDescriptor	1
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:224:12:USBD_HID_SerialStrDescriptor	2
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:244:12:USBD_HID_ConfigStrDescriptor	2
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/usbd_desc.c:265:12:USBD_HID_InterfaceStrDescriptor	2
