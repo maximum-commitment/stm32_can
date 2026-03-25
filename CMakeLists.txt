@@ -50,7 +50,13 @@ set(DRIVER_SOURCE_FILES "./STM32CubeIDE/Debug/Drivers/STM32F4xx_HAL_Drivers/stm3
 "./STM32CubeIDE/Debug/Drivers/BSP/Components/lis3dsh.o"
 "./STM32CubeIDE/Debug/Drivers/BSP/Components/lis302dl.o"
 "./STM32CubeIDE/Debug/Drivers/BSP/STM32F4_DISCO/stm32f4_discovery.o"
-"./STM32CubeIDE/Debug/Drivers/BSP/STM32F4_DISCO/stm32f4_discovery_accelerometer.o")
+"./STM32CubeIDE/Debug/Drivers/BSP/STM32F4_DISCO/stm32f4_discovery_accelerometer.o"
+"./STM32CubeIDE/Application/User/syscalls.c"
+"./STM32CubeIDE/Application/User/sysmem.c"
+)
+
+#files missing from build
+#STM32CubeIDE/Debug/Application/Startup/startup_stm32f407vgtx.o STM32CubeIDE/Debug/Application/User/stm32f4xx_hal_msp.o STM32CubeIDE/Debug/Drivers/CMSIS/system_stm32f4xx.o
 
 
 # Add executable target with source files listed in MAIN_PROJECT_SOURCE_FILES variable
@@ -61,7 +67,6 @@ target_sources(${CMAKE_MAIN_PROJECT} PRIVATE ${MAIN_PROJECT_SOURCE_FILES} ${DRIV
 
 set(CMAKE_EXE_LINKER_FLAGS "-mcpu=cortex-m4 -Wl,-T STM32CubeIDE/STM32F407VGTX_FLASH.ld --specs=nosys.specs -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group"
 CACHE INTERNAL "linker options")
-
 
 target_include_directories(${CMAKE_MAIN_PROJECT} PRIVATE
 "Inc" 
