@@ -3,7 +3,7 @@ set(CMAKE_MAIN_PROJECT "stm32")
 
 
 project(${CMAKE_MAIN_PROJECT})
-set(CMAKE_C_COMPILER arm-none-eabi-gcc)
+set(CMAKE_C_COMPILER /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.macos64_1.0.0.202411102158/tools/bin/arm-none-eabi-gcc)
 unset(CMAKE_C_LINK_FLAGS)
 
 file(GLOB MAIN_PROJECT_SOURCE_FILES Src/*.c)
