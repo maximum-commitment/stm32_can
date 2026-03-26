@@ -34,7 +34,6 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern PCD_HandleTypeDef hpcd;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -170,7 +169,6 @@ void EXTI0_IRQHandler(void)
   */
 void OTG_FS_IRQHandler(void)
 {
-   HAL_PCD_IRQHandler(&hpcd);
 }
 
 /**
