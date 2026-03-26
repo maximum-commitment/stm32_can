@@ -61,6 +61,7 @@ TIM_OC_InitTypeDef sConfigTim4;
 /* Variables used during Systick ISR*/
 uint8_t Counter  = 0x00;
 __IO uint16_t MaxAcceleration = 0;
+uint32_t togglecounter = 0x00;
 
 /* Private function prototypes -----------------------------------------------*/
 static void TIM4_Config(void);
@@ -113,7 +114,7 @@ int main(void)
   */
 static void Demo_Exec(void)
 {
-  uint8_t togglecounter = 0x00;
+
   
   /* Initialize Accelerometer MEMS */
   if(BSP_ACCELERO_Init() != HAL_OK)
@@ -139,7 +140,6 @@ static void Demo_Exec(void)
     SystemCoreClock = HAL_RCC_GetHCLKFreq();
     SysTick_Config(SystemCoreClock / 100);  
     
-    /* Turn OFF all LEDs */
     BSP_LED_Off(LED4);
     BSP_LED_Off(LED3);
     BSP_LED_Off(LED5);
@@ -148,32 +148,13 @@ static void Demo_Exec(void)
     /* Waiting USER Button is pressed */
     while (UserButtonPressed == 0x00)
     {
-      /* Toggle LED4 */
-      BSP_LED_Toggle(LED4);
-      HAL_Delay(10);
-      /* Toggle LED4 */
-      BSP_LED_Toggle(LED3);
-      HAL_Delay(10);
-      /* Toggle LED4 */
-      BSP_LED_Toggle(LED5);
-      HAL_Delay(10);
-      /* Toggle LED4 */
-      BSP_LED_Toggle(LED6);
-      HAL_Delay(10);
-      togglecounter ++;
-      if (togglecounter == 0x10)
+      
+      if (togglecounter == 100)
       {
         togglecounter = 0x00;
-        while (togglecounter < 0x10)
-        {
-          BSP_LED_Toggle(LED4);
-          BSP_LED_Toggle(LED3);
-          BSP_LED_Toggle(LED5);
-          BSP_LED_Toggle(LED6);
-          HAL_Delay(10);
-          togglecounter ++;
-        }
-        togglecounter = 0x00;
+        BSP_LED_Toggle(LED4);
+        BSP_LED_Toggle(LED3);
+        BSP_LED_Toggle(LED5);
       }
     }
     
@@ -294,10 +275,9 @@ static void TIM4_Config(void)
   */
 void HAL_SYSTICK_Callback(void)
 {
-  uint8_t *buf;
   uint16_t Temp_X, Temp_Y = 0x00;
   uint16_t NewARR_X, NewARR_Y = 0x00;
-  
+  togglecounter ++;
  if (DemoEnterCondition != 0x00)
   {
     Counter ++;
