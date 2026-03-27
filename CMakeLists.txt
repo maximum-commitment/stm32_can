@@ -76,6 +76,7 @@ target_include_directories(${STM32_ELF_FILE} PRIVATE
 "Inc"
 "Drivers/CMSIS/Device/ST/STM32F4xx/Include"
 "Drivers/STM32F4xx_HAL_Driver/Inc"
+"Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"
 "Drivers/BSP/STM32F4-Discovery"
 "Drivers/CMSIS/Include")
 
