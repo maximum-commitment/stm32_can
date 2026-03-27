@@ -44,7 +44,7 @@
 #define MAX_AB(a,b)       (a < b) ? (b) : a
 
 /* Private variables ---------------------------------------------------------*/
-__IO uint8_t UserButtonPressed = 0x00;
+__IO uint8_t SleepModeRequest = 0x00;
 __IO uint8_t DemoEnterCondition = 0x00;
 
 /* Variables used for accelerometer */
@@ -125,13 +125,7 @@ static void Demo_Exec(void)
   }
 
   /* Reset UserButton_Pressed variable */
-  UserButtonPressed = 0x00;
-
-  /* Configure LEDs to be managed by GPIO */
-  //BSP_LED_Init(LED4);
-  //BSP_LED_Init(LED3);
-  //BSP_LED_Init(LED5);
-  //BSP_LED_Init(LED6);
+  SleepModeRequest = 0x00;
 
   /* SysTick end of count event each 10ms */
   SystemCoreClock = HAL_RCC_GetHCLKFreq();
@@ -143,16 +137,22 @@ static void Demo_Exec(void)
 
   while(1)
   {
-    /* Waiting USER Button is pressed */
-//    while (UserButtonPressed == 0x00)
+    if (togglecounter == 100)
     {
-      if (togglecounter == 100)
-      {
-        togglecounter = 0x00;
-        BSP_LED_Toggle(LED4);
-        BSP_LED_Toggle(LED3);
-        BSP_LED_Toggle(LED5);
-      }
+      togglecounter = 0x00;
+      BSP_LED_Toggle(LED4);
+      BSP_LED_Toggle(LED3);
+      BSP_LED_Toggle(LED5);
+    }
+    /* Waiting USER Button is Released */
+    if(SleepModeRequest == 0x01)
+    {
+      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
+      {}
+      HAL_SuspendTick();
+      HAL_PWR_EnterSLEEPMode(0,PWR_SLEEPENTRY_WFI);
+      // Can be used for deeper sleep, but couldn't get to work (most pins hiz)
+      // HAL_PWR_EnterSTANDBYMode();
     }
   }
 }
@@ -246,7 +246,7 @@ static void TIM4_Config(void)
   */
 void HAL_SYSTICK_Callback(void)
 {
-  togglecounter ++;
+  togglecounter++;
 }
 
 /**
@@ -258,22 +258,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if(GPIO_Pin == KEY_BUTTON_PIN) 
   {
-    if(UserButtonPressed == 0x01)
+    if(SleepModeRequest == 0x01)
     {
       HAL_ResumeTick();
       /* Waiting USER Button is Released */
-      //while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-      //{}
-      UserButtonPressed = 0x00;
+      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
+      {}
+      SleepModeRequest = 0x00;
     }
     else
     {
-      UserButtonPressed = 0x01;
-      /* Waiting USER Button is Released */
-      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-      {}
-      HAL_SuspendTick();
-      __WFI();
+      SleepModeRequest = 0x01;
     }
   }
 }
