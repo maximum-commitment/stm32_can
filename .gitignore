@@ -1,0 +1,6 @@
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+STM32CubeIDE/.settings/
+stm32.elf
+objects.txt

@@ -1,9 +1,0 @@
-../../Drivers/CMSIS/Include/core_cm4.h:1814:22:__NVIC_SetPriority	2
-../../Drivers/CMSIS/Include/core_cm4.h:2022:26:SysTick_Config	2
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:78:5:main	1
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:114:13:Demo_Exec	9
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:213:13:TIM4_Config	6
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:295:6:HAL_SYSTICK_Callback	10
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:406:6:HAL_GPIO_EXTI_Callback	2
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:419:13:Error_Handler	1
-/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/Demonstrations/Src/main.c:448:13:SystemClock_Config	2
