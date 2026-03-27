@@ -66,11 +66,37 @@ set(HAL_DRIVER_SOURCE
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_usb.c"
 )
 
+set(FREERTOS_KERNEL_PATH "../FreeRTOS/FreeRTOS")
+set(FREERTOS_KERNEL_SOURCE_PATH "${FREERTOS_KERNEL_PATH}/Source")
+
+add_library(freertos_kernel STATIC)
+
+target_sources(freertos_kernel PRIVATE
+    ${FREERTOS_KERNEL_SOURCE_PATH}/croutine.c
+    ${FREERTOS_KERNEL_SOURCE_PATH}/event_groups.c
+    ${FREERTOS_KERNEL_SOURCE_PATH}/list.c
+    ${FREERTOS_KERNEL_SOURCE_PATH}/queue.c
+    ${FREERTOS_KERNEL_SOURCE_PATH}/stream_buffer.c
+    ${FREERTOS_KERNEL_SOURCE_PATH}/tasks.c
+    ${FREERTOS_KERNEL_SOURCE_PATH}/timers.c
+)
+
+target_include_directories(freertos_kernel PRIVATE
+"Inc"
+"Drivers/CMSIS/Device/ST/STM32F4xx/Include"
+"${HAL_DRIVER_PATH}/Inc"
+"${BSP_DRIVER_PATH}/STM32F4-Discovery"
+"Drivers/CMSIS/Include"
+${FREERTOS_KERNEL_SOURCE_PATH}/include
+${FREERTOS_KERNEL_SOURCE_PATH}/portable/GCC/ARM_CM4F
+)
+
 set(ASM_SOURCE "STM32CubeIDE/Application/Startup/startup_stm32f407vgtx.s")
 
 # Add executable target with source files created in above lists
 set(STM32_ELF_FILE ${CMAKE_MAIN_PROJECT}.elf)
 add_executable(${STM32_ELF_FILE})
+target_link_libraries(${STM_32_ELF_FILE} freertos_kernel)
 target_sources(${STM32_ELF_FILE} PRIVATE 
 ${ASM_SOURCE}
 ${MAIN_PROJECT_SOURCE}
@@ -133,6 +159,18 @@ $<$<COMPILE_LANGUAGE:ASM>:${ASM_FLAGS}>
 )
 
 target_compile_definitions(${STM32_ELF_FILE} PRIVATE
+$<$<COMPILE_LANGUAGE:C>:${C_DEFS}>
+$<$<COMPILE_LANGUAGE:ASM>:>
+)
+
+
+
+target_compile_options(freertos_kernel PRIVATE
+$<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
+$<$<COMPILE_LANGUAGE:ASM>:${ASM_FLAGS}>
+)
+
+target_compile_definitions(freertos_kernel PRIVATE
 $<$<COMPILE_LANGUAGE:C>:${C_DEFS}>
 $<$<COMPILE_LANGUAGE:ASM>:>
 )
