@@ -437,6 +437,30 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c.s
 .PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.c.s
 
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.o: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.o
+.PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.o
+
+# target to build an object file
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.o
+.PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.o
+
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.i: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.i
+.PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.i
+
+# target to preprocess a source file
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.i
+.PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.i
+
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.s: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.s
+.PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.s
+
+# target to generate assembly for a file
+Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.s
+.PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c.s
+
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c.o
 .PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o
 
@@ -1524,6 +1548,9 @@ help:
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.o"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.i"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_eth.s"
+	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.o"
+	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.i"
+	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.s"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.o"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.i"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.s"

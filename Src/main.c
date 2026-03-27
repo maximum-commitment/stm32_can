@@ -191,10 +191,12 @@ static void prvSetupNestedFPUInterruptsTest( void );
  * of the FPU registers, as described at the top of this file.  The nature of
  * these files necessitates that they are written in an assembly file.
  */
+#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 extern void vRegTest1Task( void * pvParameters );
 extern void vRegTest2Task( void * pvParameters );
 extern void vRegTestClearFlopRegistersToParameterValue( unsigned long ulValue );
 extern unsigned long ulRegTestCheckFlopRegistersContainParameterValue( unsigned long ulValue );
+#endif
 
 #if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 /*
@@ -252,6 +254,8 @@ int main( void )
      * more information. */
     vStartLEDFlashTasks( mainFLASH_TASK_PRIORITY );
 #endif
+
+#ifdef COMPILEOUT_INITIAL_TEST_APP
     /* The following function will only create more tasks and timers if
      * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to 0 (at the top of this
      * file).  See the comments at the top of this file for more information. */
@@ -259,6 +263,7 @@ int main( void )
 
     /* Start the scheduler. */
     vTaskStartScheduler();
+#endif
 
     /* If all is well, the scheduler will now be running, and the following line
      * will never be reached.  If the following line does execute, then there was
@@ -485,11 +490,11 @@ void TIM3_IRQHandler( void )
     {
         ulMaxFPUInterruptNesting = ulFPUInterruptNesting;
     }
-
+#ifdef COMPILEOUT_INITIAL_TEST_APP
     /* Fill the FPU registers with 99 to overwrite the values written by
      * TIM2_IRQHandler(). */
     vRegTestClearFlopRegistersToParameterValue( 99UL );
-
+#endif
     ulFPUInterruptNesting--;
 }
 /*-----------------------------------------------------------*/
@@ -500,17 +505,20 @@ void TIM2_IRQHandler( void )
      * ulFPUInterruptNesting on entry, and decrement it on exit. */
     ulFPUInterruptNesting++;
 
+#ifdef COMPILEOUT_INITIAL_TEST_APP
     /* Fill the FPU registers with 1. */
     vRegTestClearFlopRegistersToParameterValue( 1UL );
-
+#endif
     /* Trigger a timer 3 interrupt, which will fill the registers with a
      * different value. */
     NVIC_SetPendingIRQ( TIM3_IRQn );
 
+#ifdef COMPILEOUT_INITIAL_TEST_APP
     /* Ensure that, after returning from the nesting interrupt, all the FPU
      * registers contain the value to which they were set by this interrupt
      * function. */
     configASSERT( ulRegTestCheckFlopRegistersContainParameterValue( 1UL ) );
+#endif
 
     ulFPUInterruptNesting--;
 }
@@ -593,18 +601,16 @@ void EXTI9_5_IRQHandler( void )
      * the interrupt. */
     //EXTI_ClearITPendingBit( EXTI_Line6 );
     /* Note trigger param appears to be unused by driver, perhaps will be in future update */
-//     typedef struct
-// {
-//   uint32_t Line;                    /*!<  Exti line number */
-//   void (* PendingCallback)(void);   /*!<  Exti pending callback */
-// } EXTI_HandleTypeDef;
+    /* Note callback pointer also unused, but this will likely be permanent */
     EXTI_HandleTypeDef hexti = {.Line = LL_SYSCFG_EXTI_LINE6, .PendingCallback = NULL};
     HAL_EXTI_ClearPending(&hexti, EXTI_TRIGGER_NONE /* param unused */);
 
+#ifdef COMPILEOUT_INITIAL_TEST_APP
     /* This interrupt does nothing more than demonstrate how to synchronise a
      * task with an interrupt.  First the handler releases a semaphore.
      * lHigherPriorityTaskWoken has been initialised to zero. */
     xSemaphoreGiveFromISR( xTestSemaphore, &lHigherPriorityTaskWoken );
+#endif
 
     /* If there was a task that was blocked on the semaphore, and giving the
      * semaphore caused the task to unblock, and the unblocked task has a priority

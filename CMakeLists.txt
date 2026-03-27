@@ -62,6 +62,7 @@ set(HAL_DRIVER_SOURCE
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_fsmc.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_sdmmc.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_usb.c"
+"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_exti.c"
 )
 
 set(FREERTOS_KERNEL_PATH "../FreeRTOS/FreeRTOS")

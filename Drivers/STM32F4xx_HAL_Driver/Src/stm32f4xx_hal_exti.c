@@ -85,6 +85,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
+#define HAL_EXTI_MODULE_ENABLED
+#include "stm32f4xx_hal_exti.h"
+
 /** @addtogroup STM32F4xx_HAL_Driver
   * @{
   */
