@@ -18,6 +18,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stm32f4xx_hal_pwr.h"
 
 /** @addtogroup STM32F4xx_HAL_Demonstrations
   * @{
@@ -61,7 +62,7 @@ TIM_OC_InitTypeDef sConfigTim4;
 /* Variables used during Systick ISR*/
 uint8_t Counter  = 0x00;
 __IO uint16_t MaxAcceleration = 0;
-uint32_t togglecounter = 0x00;
+volatile uint32_t togglecounter = 0x00;
 
 /* Private function prototypes -----------------------------------------------*/
 static void TIM4_Config(void);
@@ -123,32 +124,28 @@ static void Demo_Exec(void)
     Error_Handler(); 
   }
 
+  /* Reset UserButton_Pressed variable */
+  UserButtonPressed = 0x00;
+
+  /* Configure LEDs to be managed by GPIO */
+  //BSP_LED_Init(LED4);
+  //BSP_LED_Init(LED3);
+  //BSP_LED_Init(LED5);
+  //BSP_LED_Init(LED6);
+
+  /* SysTick end of count event each 10ms */
+  SystemCoreClock = HAL_RCC_GetHCLKFreq();
+  SysTick_Config(SystemCoreClock / 100);
+  BSP_LED_Off(LED4);
+  BSP_LED_Off(LED3);
+  BSP_LED_Off(LED5);
+  BSP_LED_Off(LED6);
+
   while(1)
   {
-    DemoEnterCondition = 0x00;
-    
-    /* Reset UserButton_Pressed variable */
-    UserButtonPressed = 0x00;
-    
-    /* Configure LEDs to be managed by GPIO */
-    BSP_LED_Init(LED4);
-    BSP_LED_Init(LED3);
-    BSP_LED_Init(LED5);
-    BSP_LED_Init(LED6);
-    
-    /* SysTick end of count event each 10ms */
-    SystemCoreClock = HAL_RCC_GetHCLKFreq();
-    SysTick_Config(SystemCoreClock / 100);  
-    
-    BSP_LED_Off(LED4);
-    BSP_LED_Off(LED3);
-    BSP_LED_Off(LED5);
-    BSP_LED_Off(LED6);
-    
     /* Waiting USER Button is pressed */
-    while (UserButtonPressed == 0x00)
+//    while (UserButtonPressed == 0x00)
     {
-      
       if (togglecounter == 100)
       {
         togglecounter = 0x00;
@@ -156,32 +153,6 @@ static void Demo_Exec(void)
         BSP_LED_Toggle(LED3);
         BSP_LED_Toggle(LED5);
       }
-    }
-    
-    /* Waiting USER Button is Released */
-    while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-    {}
-    UserButtonPressed = 0x00;
-    
-    /* TIM4 channels configuration */
-    TIM4_Config();
-  
-    DemoEnterCondition = 0x01; 
-    
-
-
-    /* Waiting USER Button is pressed */
-    while (UserButtonPressed == 0x00)
-    {}
-    
-    /* Waiting USER Button is Released */
-    while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-    {}
-
-    if(HAL_TIM_PWM_DeInit(&htim4) != HAL_OK)
-    {
-      /* Initialization Error */
-      Error_Handler();
     }
   }
 }
@@ -275,107 +246,7 @@ static void TIM4_Config(void)
   */
 void HAL_SYSTICK_Callback(void)
 {
-  uint16_t Temp_X, Temp_Y = 0x00;
-  uint16_t NewARR_X, NewARR_Y = 0x00;
   togglecounter ++;
- if (DemoEnterCondition != 0x00)
-  {
-    Counter ++;
-    if (Counter == 10)
-    {
-      /* Reset Buffer used to get accelerometer values */
-      Buffer[0] = 0;
-      Buffer[1] = 0;
-      
-      /* Disable All TIM4 Capture Compare Channels */
-      HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
-      HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
-      HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_3);
-      HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_4);
-
-      /* Read Acceleration*/
-      BSP_ACCELERO_GetXYZ(Buffer);
-      
-      /* Set X and Y positions */
-      X_Offset = Buffer[0];
-      Y_Offset = Buffer[1];
-      
-      /* Update New autoreload value in case of X or Y acceleration*/
-      /* Basic acceleration X_Offset and Y_Offset are divide by 40 to fir with ARR range */
-      NewARR_X = TIM_ARR - ABS(X_Offset/3);
-      NewARR_Y = TIM_ARR - ABS(Y_Offset/3);
-      
-      /* Calculation of Max acceleration detected on X or Y axis */
-      Temp_X = ABS(X_Offset/3);
-      Temp_Y = ABS(Y_Offset/3);
-      MaxAcceleration = MAX_AB(Temp_X, Temp_Y);
-
-      if(MaxAcceleration != 0)
-      {
-        
-        /* Reset CNT to a lowest value (equal to min CCRx of all Channels) */
-        __HAL_TIM_SET_COUNTER(&htim4,(TIM_ARR-MaxAcceleration)/2);
-        
-        if (X_Offset < ThreadholdAcceleroLow)
-        {
-          
-          /* Sets the TIM4 Capture Compare for Channel1 Register value */
-          /* Equal to NewARR_X/2 to have duty cycle equal to 50% */
-          __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, NewARR_X/2);  
-          
-          /* Time base configuration */      
-          __HAL_TIM_SET_AUTORELOAD(&htim4, NewARR_X);
-          
-          /* Enable TIM4 Capture Compare Channel1 */
-          HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);  
-          
-        }
-        else if (X_Offset > ThreadholdAcceleroHigh)
-        {
-          
-          /* Sets the TIM4 Capture Compare for Channel3 Register value */
-          /* Equal to NewARR_X/2 to have duty cycle equal to 50% */
-          __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, NewARR_X/2);                  
-          
-          /* Time base configuration */      
-          __HAL_TIM_SET_AUTORELOAD(&htim4, NewARR_X);
-          
-          /* Enable TIM4 Capture Compare Channel3 */
-          HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);  
-          
-        }
-        if (Y_Offset > ThreadholdAcceleroHigh)
-        { 
-          
-          /* Sets the TIM4 Capture Compare for Channel2 Register value */
-          /* Equal to NewARR_Y/2 to have duty cycle equal to 50% */
-          __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_2,NewARR_Y/2);    
-    
-          /* Time base configuration */      
-          __HAL_TIM_SET_AUTORELOAD(&htim4, NewARR_Y);
-
-          /* Enable TIM4 Capture Compare Channel2 */
-          HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);    
-          
-        }      
-        else if (Y_Offset < ThreadholdAcceleroLow)
-        { 
-          
-          /* Sets the TIM4 Capture Compare for Channel4 Register value */
-          /* Equal to NewARR_Y/2 to have duty cycle equal to 50% */
-          __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, NewARR_Y/2);   
-          
-          /* Time base configuration */      
-          __HAL_TIM_SET_AUTORELOAD(&htim4, NewARR_Y);
-          
-          /* Enable TIM4 Capture Compare Channel4 */
-          HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_4);    
-          
-        }
-      }
-      Counter = 0x00;
-    }  
-  }
 }
 
 /**
@@ -387,7 +258,23 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
   if(GPIO_Pin == KEY_BUTTON_PIN) 
   {
-    UserButtonPressed = 0x01;
+    if(UserButtonPressed == 0x01)
+    {
+      HAL_ResumeTick();
+      /* Waiting USER Button is Released */
+      //while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
+      //{}
+      UserButtonPressed = 0x00;
+    }
+    else
+    {
+      UserButtonPressed = 0x01;
+      /* Waiting USER Button is Released */
+      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
+      {}
+      HAL_SuspendTick();
+      __WFI();
+    }
   }
 }
 
