@@ -130,6 +130,11 @@
 #include "stm32f4xx_conf.h"
 #endif
 
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_cortex.h"
+#include "stm32f4xx_ll_system.h"
+#include "stm32f4xx_hal_exti.h"
+
 /* Priorities for the demo application tasks. */
 #define mainFLASH_TASK_PRIORITY                    ( tskIDLE_PRIORITY + 1UL )
 #define mainQUEUE_POLL_PRIORITY                    ( tskIDLE_PRIORITY + 2UL )
@@ -159,7 +164,7 @@
  * comprehensive test application.  See the comments at the top of this file, and
  * the documentation page on the http://www.FreeRTOS.org web site for more
  * information. */
-#define mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY    0
+#define mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY    1
 
 /*-----------------------------------------------------------*/
 
@@ -168,6 +173,7 @@
  */
 static void prvSetupHardware( void );
 
+#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 /*
  * The check timer callback function, as described at the top of this file.
  */
@@ -178,6 +184,7 @@ static void prvCheckTimerCallback( TimerHandle_t xTimer );
  * described at the top of this file.
  */
 static void prvSetupNestedFPUInterruptsTest( void );
+#endif
 
 /*
  * Register check tasks, and the tasks used to write over and check the contents
@@ -189,13 +196,14 @@ extern void vRegTest2Task( void * pvParameters );
 extern void vRegTestClearFlopRegistersToParameterValue( unsigned long ulValue );
 extern unsigned long ulRegTestCheckFlopRegistersContainParameterValue( unsigned long ulValue );
 
+#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 /*
  * The task that is synchronised with the button interrupt.  This is done just
  * to demonstrate how to write interrupt service routines, and how to
  * synchronise a task with an interrupt.
  */
 static void prvButtonTestTask( void * pvParameters );
-
+#endif
 /*
  * This file can be used to create either a simple LED flasher example, or a
  * comprehensive test/demo application - depending on the setting of the
@@ -262,7 +270,7 @@ int main( void )
     }
 }
 /*-----------------------------------------------------------*/
-
+#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 static void prvCheckTimerCallback( TimerHandle_t xTimer )
 {
     static long lChangedTimerPeriodAlready = pdFALSE;
@@ -385,24 +393,26 @@ static void prvButtonTestTask( void * pvParameters )
     }
 }
 /*-----------------------------------------------------------*/
-
+#endif
 static void prvSetupHardware( void )
 {
     /* Setup STM32 system (clock, PLL and Flash configuration) */
     SystemInit();
 
     /* Ensure all priority bits are assigned as preemption priority bits. */
-    NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
+    HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4 );
 
 #ifdef FREERTOS_TESTCODE
     /* Setup the LED outputs. */
     vParTestInitialise();
 #endif
 
+#ifdef STMEVAL_BRD_TESTCODE
     /* Configure the button input.  This configures the interrupt to use the
      * lowest interrupt priority, so it is ok to use the ISR safe FreeRTOS API
      * from the button interrupt handler. */
     STM_EVAL_PBInit( BUTTON_USER, BUTTON_MODE_EXTI );
+#endif
 }
 /*-----------------------------------------------------------*/
 
@@ -433,7 +443,7 @@ void vApplicationTickHook( void )
     #endif /* if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 ) */
 }
 /*-----------------------------------------------------------*/
-
+#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 static void prvSetupNestedFPUInterruptsTest( void )
 {
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -458,6 +468,7 @@ static void prvSetupNestedFPUInterruptsTest( void )
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init( &NVIC_InitStructure );
 }
+#endif
 /*-----------------------------------------------------------*/
 
 void TIM3_IRQHandler( void )
@@ -561,7 +572,7 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         vCreateSuicidalTasks( mainCREATOR_TASK_PRIORITY );
 #endif
     }
-    #else /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
+    //#else /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
     {
         /* Just to prevent compiler warnings when the configuration options are
          * set such that these static functions are not used. */
@@ -580,7 +591,15 @@ void EXTI9_5_IRQHandler( void )
 
     /* Only line 6 is enabled, so there is no need to test which line generated
      * the interrupt. */
-    EXTI_ClearITPendingBit( EXTI_Line6 );
+    //EXTI_ClearITPendingBit( EXTI_Line6 );
+    /* Note trigger param appears to be unused by driver, perhaps will be in future update */
+//     typedef struct
+// {
+//   uint32_t Line;                    /*!<  Exti line number */
+//   void (* PendingCallback)(void);   /*!<  Exti pending callback */
+// } EXTI_HandleTypeDef;
+    EXTI_HandleTypeDef hexti = {.Line = LL_SYSCFG_EXTI_LINE6, .PendingCallback = NULL};
+    HAL_EXTI_ClearPending(&hexti, EXTI_TRIGGER_NONE /* param unused */);
 
     /* This interrupt does nothing more than demonstrate how to synchronise a
      * task with an interrupt.  First the handler releases a semaphore.

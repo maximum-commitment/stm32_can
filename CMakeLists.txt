@@ -18,8 +18,6 @@ file(GLOB MAIN_PROJECT_SOURCE Src/*.c)
 set(BSP_DRIVER_SOURCE
 "${BSP_DRIVER_PATH}/Components/lis302dl/lis302dl.c"
 "${BSP_DRIVER_PATH}/Components/lis3dsh/lis3dsh.c"
-"${BSP_DRIVER_PATH}/STM32F4-Discovery/stm32f4_discovery.c"
-"${BSP_DRIVER_PATH}/STM32F4-Discovery/stm32f4_discovery_accelerometer.c"
 )
 
 # All files from drivers
@@ -85,7 +83,6 @@ target_include_directories(freertos_kernel PRIVATE
 "Inc"
 "Drivers/CMSIS/Device/ST/STM32F4xx/Include"
 "${HAL_DRIVER_PATH}/Inc"
-"${BSP_DRIVER_PATH}/STM32F4-Discovery"
 "Drivers/CMSIS/Include"
 ${FREERTOS_KERNEL_SOURCE_PATH}/include
 ${FREERTOS_KERNEL_SOURCE_PATH}/portable/GCC/ARM_CM4F

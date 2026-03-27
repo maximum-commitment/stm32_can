@@ -197,54 +197,6 @@ Drivers/BSP/Components/lis3dsh/lis3dsh.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/Components/lis3dsh/lis3dsh.c.s
 .PHONY : Drivers/BSP/Components/lis3dsh/lis3dsh.c.s
 
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.o: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.o
-
-# target to build an object file
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o
-
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.i: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.i
-
-# target to preprocess a source file
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i
-
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.s: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.s
-
-# target to generate assembly for a file
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s
-
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.o: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.o
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.o
-
-# target to build an object file
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.o
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.o
-
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.i: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.i
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.i
-
-# target to preprocess a source file
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.i
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.i
-
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.s: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.s
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.s
-
-# target to generate assembly for a file
-Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.s
-.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c.s
-
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c.o
 .PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
 
@@ -1542,12 +1494,6 @@ help:
 	@echo "... Drivers/BSP/Components/lis3dsh/lis3dsh.o"
 	@echo "... Drivers/BSP/Components/lis3dsh/lis3dsh.i"
 	@echo "... Drivers/BSP/Components/lis3dsh/lis3dsh.s"
-	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.o"
-	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.i"
-	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.s"
-	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.o"
-	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.i"
-	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.s"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.i"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.s"
