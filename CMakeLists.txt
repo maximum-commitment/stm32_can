@@ -115,6 +115,11 @@ target_include_directories(${STM32_ELF_FILE} PRIVATE
 "${HAL_DRIVER_PATH}/Inc"
 "${BSP_DRIVER_PATH}/STM32F4-Discovery"
 "Drivers/CMSIS/Include"
+${FREERTOS_KERNEL_SOURCE_PATH}/include
+${FREERTOS_KERNEL_SOURCE_PATH}/portable/GCC/ARM_CM4F
+Common/include
+CORTEX_M4F_STM32F407ZG-SK/board
+CORTEX_M4F_STM32F407ZG-SK
 )
 
 set(C_FLAGS
@@ -162,8 +167,6 @@ target_compile_definitions(${STM32_ELF_FILE} PRIVATE
 $<$<COMPILE_LANGUAGE:C>:${C_DEFS}>
 $<$<COMPILE_LANGUAGE:ASM>:>
 )
-
-
 
 target_compile_options(freertos_kernel PRIVATE
 $<$<COMPILE_LANGUAGE:C>:${C_FLAGS}>
