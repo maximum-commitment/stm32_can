@@ -108,6 +108,7 @@
 #include "semphr.h"
 
 /* Demo application includes. */
+#if 0
 #include "partest.h"
 #include "flash.h"
 #include "flop.h"
@@ -121,12 +122,13 @@
 #include "GenQTest.h"
 #include "recmutex.h"
 #include "death.h"
+#endif
 
 /* Hardware and starter kit includes. */
-#include "arm_comm.h"
-#include "iar_stm32f407zg_sk.h"
+#if 0
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
+#endif
 
 /* Priorities for the demo application tasks. */
 #define mainFLASH_TASK_PRIORITY                    ( tskIDLE_PRIORITY + 1UL )
@@ -234,14 +236,14 @@ int main( void )
 {
     /* Configure the hardware ready to run the test. */
     prvSetupHardware();
-
+#if 0
     /* Start standard demo/test application flash tasks.  See the comments at
      * the top of this file.  The LED flash tasks are always created.  The other
      * tasks are only created if mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to
      * 0 (at the top of this file).  See the comments at the top of this file for
      * more information. */
     vStartLEDFlashTasks( mainFLASH_TASK_PRIORITY );
-
+#endif
     /* The following function will only create more tasks and timers if
      * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to 0 (at the top of this
      * file).  See the comments at the top of this file for more information. */
@@ -269,7 +271,7 @@ static void prvCheckTimerCallback( TimerHandle_t xTimer )
 
     /* Check all the demo tasks (other than the flash tasks) to ensure
      * that they are all still running, and that none have detected an error. */
-
+#if 0
     if( xAreMathsTaskStillRunning() != pdTRUE )
     {
         lErrorFound = pdTRUE;
@@ -319,6 +321,7 @@ static void prvCheckTimerCallback( TimerHandle_t xTimer )
     {
         lErrorFound = pdTRUE;
     }
+#endif
 
     /* Check that the register test 1 task is still running. */
     if( ulLastRegTest1Value == ulRegTest1LoopCounter )
@@ -336,10 +339,12 @@ static void prvCheckTimerCallback( TimerHandle_t xTimer )
 
     ulLastRegTest2Value = ulRegTest2LoopCounter;
 
+#if 0
     /* Toggle the check LED to give an indication of the system status.  If
      * the LED toggles every mainCHECK_TIMER_PERIOD_MS milliseconds then
      * everything is ok.  A faster toggle indicates an error. */
     vParTestToggleLED( mainCHECK_LED );
+#endif
 
     /* Have any errors been latch in lErrorFound?  If so, shorten the
      * period of the check timer to mainERROR_CHECK_TIMER_PERIOD_MS milliseconds.
@@ -389,8 +394,10 @@ static void prvSetupHardware( void )
     /* Ensure all priority bits are assigned as preemption priority bits. */
     NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
 
+#if 0
     /* Setup the LED outputs. */
     vParTestInitialise();
+#endif
 
     /* Configure the button input.  This configures the interrupt to use the
      * lowest interrupt priority, so it is ok to use the ISR safe FreeRTOS API
@@ -507,7 +514,7 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         /* Configure the interrupts used to test FPU registers being used from
          * nested interrupts. */
         prvSetupNestedFPUInterruptsTest();
-
+#if 0
         /* Start all the other standard demo/test tasks. */
         vStartIntegerMathTasks( tskIDLE_PRIORITY );
         vStartDynamicPriorityTasks();
@@ -518,10 +525,11 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         vStartRecursiveMutexTasks();
         vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
         vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
-
+#endif
+#if 0
         /* Most importantly, start the tasks that use the FPU. */
         vStartMathTasks( mainFLOP_TASK_PRIORITY );
-
+#endif
         /* Create the register check tasks, as described at the top of this
          * file */
         xTaskCreate( vRegTest1Task, "Reg1", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
@@ -547,10 +555,11 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         {
             xTimerStart( xCheckTimer, mainDONT_BLOCK );
         }
-
+#if 0
         /* This task has to be created last as it keeps account of the number of
          * tasks it expects to see running. */
         vCreateSuicidalTasks( mainCREATOR_TASK_PRIORITY );
+#endif
     }
     #else /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
     {
