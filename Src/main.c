@@ -108,7 +108,7 @@
 #include "semphr.h"
 
 /* Demo application includes. */
-#if 0
+#ifdef FREERTOS_TESTCODE
 #include "partest.h"
 #include "flash.h"
 #include "flop.h"
@@ -125,7 +125,7 @@
 #endif
 
 /* Hardware and starter kit includes. */
-#if 0
+#ifdef FREERTOS_TESTCODE
 #include "stm32f4xx.h"
 #include "stm32f4xx_conf.h"
 #endif
@@ -236,7 +236,7 @@ int main( void )
 {
     /* Configure the hardware ready to run the test. */
     prvSetupHardware();
-#if 0
+#ifdef FREERTOS_TESTCODE
     /* Start standard demo/test application flash tasks.  See the comments at
      * the top of this file.  The LED flash tasks are always created.  The other
      * tasks are only created if mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to
@@ -271,7 +271,7 @@ static void prvCheckTimerCallback( TimerHandle_t xTimer )
 
     /* Check all the demo tasks (other than the flash tasks) to ensure
      * that they are all still running, and that none have detected an error. */
-#if 0
+#ifdef FREERTOS_TESTCODE
     if( xAreMathsTaskStillRunning() != pdTRUE )
     {
         lErrorFound = pdTRUE;
@@ -339,7 +339,7 @@ static void prvCheckTimerCallback( TimerHandle_t xTimer )
 
     ulLastRegTest2Value = ulRegTest2LoopCounter;
 
-#if 0
+#ifdef FREERTOS_TESTCODE
     /* Toggle the check LED to give an indication of the system status.  If
      * the LED toggles every mainCHECK_TIMER_PERIOD_MS milliseconds then
      * everything is ok.  A faster toggle indicates an error. */
@@ -394,7 +394,7 @@ static void prvSetupHardware( void )
     /* Ensure all priority bits are assigned as preemption priority bits. */
     NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
 
-#if 0
+#ifdef FREERTOS_TESTCODE
     /* Setup the LED outputs. */
     vParTestInitialise();
 #endif
@@ -514,7 +514,7 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         /* Configure the interrupts used to test FPU registers being used from
          * nested interrupts. */
         prvSetupNestedFPUInterruptsTest();
-#if 0
+#ifdef FREERTOS_TESTCODE
         /* Start all the other standard demo/test tasks. */
         vStartIntegerMathTasks( tskIDLE_PRIORITY );
         vStartDynamicPriorityTasks();
@@ -526,7 +526,7 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
         vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
 #endif
-#if 0
+#ifdef FREERTOS_TESTCODE
         /* Most importantly, start the tasks that use the FPU. */
         vStartMathTasks( mainFLOP_TASK_PRIORITY );
 #endif
@@ -555,7 +555,7 @@ static void prvOptionallyCreateComprehensveTestApplication( void )
         {
             xTimerStart( xCheckTimer, mainDONT_BLOCK );
         }
-#if 0
+#ifdef FREERTOS_TESTCODE
         /* This task has to be created last as it keeps account of the number of
          * tasks it expects to see running. */
         vCreateSuicidalTasks( mainCREATOR_TASK_PRIORITY );
