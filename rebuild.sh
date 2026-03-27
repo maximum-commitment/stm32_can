@@ -21,7 +21,7 @@ else
     echo "CMakeFiles does not exist"
 fi
 
-cmake -G "Unix Makefiles"
+cmake -S "./" -G "Unix Makefiles"
 
 # option -s: skip to not actually build
 if [ $opt_s ]; then

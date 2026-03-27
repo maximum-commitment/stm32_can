@@ -1200,54 +1200,6 @@ STM32CubeIDE/Application/Startup/startup_stm32f407vgtx.s.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/Startup/startup_stm32f407vgtx.s.o
 .PHONY : STM32CubeIDE/Application/Startup/startup_stm32f407vgtx.s.o
 
-STM32CubeIDE/Application/User/syscalls.o: STM32CubeIDE/Application/User/syscalls.c.o
-.PHONY : STM32CubeIDE/Application/User/syscalls.o
-
-# target to build an object file
-STM32CubeIDE/Application/User/syscalls.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/User/syscalls.c.o
-.PHONY : STM32CubeIDE/Application/User/syscalls.c.o
-
-STM32CubeIDE/Application/User/syscalls.i: STM32CubeIDE/Application/User/syscalls.c.i
-.PHONY : STM32CubeIDE/Application/User/syscalls.i
-
-# target to preprocess a source file
-STM32CubeIDE/Application/User/syscalls.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/User/syscalls.c.i
-.PHONY : STM32CubeIDE/Application/User/syscalls.c.i
-
-STM32CubeIDE/Application/User/syscalls.s: STM32CubeIDE/Application/User/syscalls.c.s
-.PHONY : STM32CubeIDE/Application/User/syscalls.s
-
-# target to generate assembly for a file
-STM32CubeIDE/Application/User/syscalls.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/User/syscalls.c.s
-.PHONY : STM32CubeIDE/Application/User/syscalls.c.s
-
-STM32CubeIDE/Application/User/sysmem.o: STM32CubeIDE/Application/User/sysmem.c.o
-.PHONY : STM32CubeIDE/Application/User/sysmem.o
-
-# target to build an object file
-STM32CubeIDE/Application/User/sysmem.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/User/sysmem.c.o
-.PHONY : STM32CubeIDE/Application/User/sysmem.c.o
-
-STM32CubeIDE/Application/User/sysmem.i: STM32CubeIDE/Application/User/sysmem.c.i
-.PHONY : STM32CubeIDE/Application/User/sysmem.i
-
-# target to preprocess a source file
-STM32CubeIDE/Application/User/sysmem.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/User/sysmem.c.i
-.PHONY : STM32CubeIDE/Application/User/sysmem.c.i
-
-STM32CubeIDE/Application/User/sysmem.s: STM32CubeIDE/Application/User/sysmem.c.s
-.PHONY : STM32CubeIDE/Application/User/sysmem.s
-
-# target to generate assembly for a file
-STM32CubeIDE/Application/User/sysmem.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/STM32CubeIDE/Application/User/sysmem.c.s
-.PHONY : STM32CubeIDE/Application/User/sysmem.c.s
-
 Src/main.o: Src/main.c.o
 .PHONY : Src/main.o
 
@@ -1295,6 +1247,78 @@ Src/stm32f4xx_hal_msp.s: Src/stm32f4xx_hal_msp.c.s
 Src/stm32f4xx_hal_msp.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_hal_msp.c.s
 .PHONY : Src/stm32f4xx_hal_msp.c.s
+
+Src/stm32f4xx_it.o: Src/stm32f4xx_it.c.o
+.PHONY : Src/stm32f4xx_it.o
+
+# target to build an object file
+Src/stm32f4xx_it.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.o
+.PHONY : Src/stm32f4xx_it.c.o
+
+Src/stm32f4xx_it.i: Src/stm32f4xx_it.c.i
+.PHONY : Src/stm32f4xx_it.i
+
+# target to preprocess a source file
+Src/stm32f4xx_it.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.i
+.PHONY : Src/stm32f4xx_it.c.i
+
+Src/stm32f4xx_it.s: Src/stm32f4xx_it.c.s
+.PHONY : Src/stm32f4xx_it.s
+
+# target to generate assembly for a file
+Src/stm32f4xx_it.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.s
+.PHONY : Src/stm32f4xx_it.c.s
+
+Src/syscalls.o: Src/syscalls.c.o
+.PHONY : Src/syscalls.o
+
+# target to build an object file
+Src/syscalls.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/syscalls.c.o
+.PHONY : Src/syscalls.c.o
+
+Src/syscalls.i: Src/syscalls.c.i
+.PHONY : Src/syscalls.i
+
+# target to preprocess a source file
+Src/syscalls.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/syscalls.c.i
+.PHONY : Src/syscalls.c.i
+
+Src/syscalls.s: Src/syscalls.c.s
+.PHONY : Src/syscalls.s
+
+# target to generate assembly for a file
+Src/syscalls.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/syscalls.c.s
+.PHONY : Src/syscalls.c.s
+
+Src/sysmem.o: Src/sysmem.c.o
+.PHONY : Src/sysmem.o
+
+# target to build an object file
+Src/sysmem.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/sysmem.c.o
+.PHONY : Src/sysmem.c.o
+
+Src/sysmem.i: Src/sysmem.c.i
+.PHONY : Src/sysmem.i
+
+# target to preprocess a source file
+Src/sysmem.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/sysmem.c.i
+.PHONY : Src/sysmem.c.i
+
+Src/sysmem.s: Src/sysmem.c.s
+.PHONY : Src/sysmem.s
+
+# target to generate assembly for a file
+Src/sysmem.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/sysmem.c.s
+.PHONY : Src/sysmem.c.s
 
 Src/system_stm32f4xx.o: Src/system_stm32f4xx.c.o
 .PHONY : Src/system_stm32f4xx.o
@@ -1463,18 +1487,21 @@ help:
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.i"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.s"
 	@echo "... STM32CubeIDE/Application/Startup/startup_stm32f407vgtx.o"
-	@echo "... STM32CubeIDE/Application/User/syscalls.o"
-	@echo "... STM32CubeIDE/Application/User/syscalls.i"
-	@echo "... STM32CubeIDE/Application/User/syscalls.s"
-	@echo "... STM32CubeIDE/Application/User/sysmem.o"
-	@echo "... STM32CubeIDE/Application/User/sysmem.i"
-	@echo "... STM32CubeIDE/Application/User/sysmem.s"
 	@echo "... Src/main.o"
 	@echo "... Src/main.i"
 	@echo "... Src/main.s"
 	@echo "... Src/stm32f4xx_hal_msp.o"
 	@echo "... Src/stm32f4xx_hal_msp.i"
 	@echo "... Src/stm32f4xx_hal_msp.s"
+	@echo "... Src/stm32f4xx_it.o"
+	@echo "... Src/stm32f4xx_it.i"
+	@echo "... Src/stm32f4xx_it.s"
+	@echo "... Src/syscalls.o"
+	@echo "... Src/syscalls.i"
+	@echo "... Src/syscalls.s"
+	@echo "... Src/sysmem.o"
+	@echo "... Src/sysmem.i"
+	@echo "... Src/sysmem.s"
 	@echo "... Src/system_stm32f4xx.o"
 	@echo "... Src/system_stm32f4xx.i"
 	@echo "... Src/system_stm32f4xx.s"
