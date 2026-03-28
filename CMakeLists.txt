@@ -5,9 +5,13 @@ set(CMAKE_MAIN_PROJECT "stm32")
 project(${CMAKE_MAIN_PROJECT} C ASM)
 set(CMAKE_C_COMPILER /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.macos64_1.0.0.202411102158/tools/bin/arm-none-eabi-gcc)
 set(CMAKE_ASM_COMPILER /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.macos64_1.0.0.202411102158/tools/bin/arm-none-eabi-gcc)
+set(CMAKE_AR /Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.macos64_1.0.0.202411102158/tools/bin/arm-none-eabi-ar)
 
 # Remove default linker flags that caused error, perhaps a better way in the future
 unset(CMAKE_C_LINK_FLAGS)
+unset(CMAKE_STATIC_LINKER_FLAGS)
+
+set(CMAKE_C_CREATE_STATIC_LIBRARY "<CMAKE_AR> rc <TARGET> <OBJECTS> ")
 
 set(HAL_DRIVER_PATH "Drivers/STM32F4xx_HAL_Driver")
 set(BSP_DRIVER_PATH "Drivers/BSP")
