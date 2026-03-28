@@ -1213,6 +1213,30 @@ Src/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/main.c.s
 .PHONY : Src/main.c.s
 
+Src/port.o: Src/port.c.o
+.PHONY : Src/port.o
+
+# target to build an object file
+Src/port.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/port.c.o
+.PHONY : Src/port.c.o
+
+Src/port.i: Src/port.c.i
+.PHONY : Src/port.i
+
+# target to preprocess a source file
+Src/port.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/port.c.i
+.PHONY : Src/port.c.i
+
+Src/port.s: Src/port.c.s
+.PHONY : Src/port.s
+
+# target to generate assembly for a file
+Src/port.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/port.c.s
+.PHONY : Src/port.c.s
+
 Src/stm32f4xx_hal_msp.o: Src/stm32f4xx_hal_msp.c.o
 .PHONY : Src/stm32f4xx_hal_msp.o
 
@@ -1645,6 +1669,9 @@ help:
 	@echo "... Src/main.o"
 	@echo "... Src/main.i"
 	@echo "... Src/main.s"
+	@echo "... Src/port.o"
+	@echo "... Src/port.i"
+	@echo "... Src/port.s"
 	@echo "... Src/stm32f4xx_hal_msp.o"
 	@echo "... Src/stm32f4xx_hal_msp.i"
 	@echo "... Src/stm32f4xx_hal_msp.s"
