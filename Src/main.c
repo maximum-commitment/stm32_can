@@ -165,6 +165,25 @@ void CAN_Send_DemoMessage()
                                                        (const uint8_t *) &TxData, 
                                                        &TxMailbox);
 }
+
+void CAN_Send_Message(const uint8_t *buf)
+{
+  const CAN_TxHeaderTypeDef TxHeader = {
+      .StdId=0x555U,
+      .ExtId=0x0U,
+      .IDE=CAN_ID_STD,
+      .RTR = 0x0U,
+      .DLC = 0x8U,
+      .TransmitGlobalTime = DISABLE};
+
+  #define CAN_TXDATA_BUFFER_SIZE 32
+  uint32_t TxMailbox = 0;
+
+  HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan1,
+                                                       &TxHeader,
+                                                       (const uint8_t *) buf,
+                                                       &TxMailbox);
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -272,7 +291,7 @@ const CAN_FilterTypeDef myFlt =
     
   CAN_RxHeaderTypeDef RxHeader = 
 {
-  .StdId = 0x555,    /*!< Specifies the standard identifier.
+  .StdId = 0x554,    /*!< Specifies the standard identifier.
                           This parameter must be a number between Min_Data = 0 and Max_Data = 0x7FF. */
 
   .ExtId = 0,    /*!< Specifies the extended identifier.
@@ -298,7 +317,11 @@ const CAN_FilterTypeDef myFlt =
     
     if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
     { 
-      rx_status =  HAL_CAN_GetRxMessage(&hcan1, 0, &RxHeader, RxData); 
+      rx_status =  HAL_CAN_GetRxMessage(&hcan1, 0, &RxHeader, RxData);
+      if(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)!=0)
+      {
+    	  CAN_Send_Message(RxData);
+      }
     }
     /* USER CODE BEGIN 3 */
   }
