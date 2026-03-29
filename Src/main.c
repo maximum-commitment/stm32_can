@@ -67,7 +67,21 @@ static void Demo_Exec(void);
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
-CAN_HandleTypeDef hcan;
+CAN_HandleTypeDef hcan1 =
+{
+.Instance = CAN1,
+.Init.Prescaler = 28,
+.Init.Mode = CAN_MODE_LOOPBACK,
+.Init.SyncJumpWidth = CAN_SJW_1TQ,
+.Init.TimeSeg1 = CAN_BS1_1TQ,
+.Init.TimeSeg2 = CAN_BS2_1TQ,
+.Init.TimeTriggeredMode = DISABLE,
+.Init.AutoBusOff = DISABLE,
+.Init.AutoWakeUp = ENABLE,
+.Init.AutoRetransmission = DISABLE,
+.Init.ReceiveFifoLocked = DISABLE,
+.Init.TransmitFifoPriority = DISABLE,
+};
 
 uint32_t Cnt_HAL_CAN_RxFifo1FullCallback = 0;
 uint32_t Cnt_HAL_CAN_RxFifo1MsgPendingCallback = 0;
@@ -171,7 +185,7 @@ void CAN_Send_DemoMessage()
   memset(TxData, 0, CAN_TXDATA_BUFFER_SIZE);
   uint32_t TxMailbox = 0;
 
-  HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan, 
+  HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan1, 
                                                        &TxHeader,
                                                        (const uint8_t *) &TxData, 
                                                        &TxMailbox);
@@ -251,6 +265,7 @@ static void Demo_Exec(void)
       BSP_LED_Toggle(LED4);
       BSP_LED_Toggle(LED3);
       BSP_LED_Toggle(LED5);
+      CAN_Send_DemoMessage();
     }
     /* Waiting USER Button is Released */
     if(SleepModeRequest == 0x01)
