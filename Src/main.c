@@ -31,41 +31,19 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define KEY_PRESSED     0x01
-#define KEY_NOT_PRESSED 0x00
+/* USER CODE BEGIN PD */
 
-/* TIM4 Autoreload and Capture Compare register values */
-#define TIM_ARR        (uint16_t)1999
-#define TIM_CCR        (uint16_t)1000
-
-#define CURSOR_STEP     7
+/* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
-#define ABS(x)         (x < 0) ? (-x) : x
-#define MAX_AB(a,b)       (a < b) ? (b) : a
+/* USER CODE BEGIN PM */
 
-/* Private variables ---------------------------------------------------------*/
-__IO uint8_t SleepModeRequest = 0x00;
-__IO uint8_t DemoEnterCondition = 0x00;
+/* USER CODE END PM */
 
-/* Variables used for accelerometer */
-__IO int16_t X_Offset, Y_Offset;
-int16_t Buffer[3];
 
-/* Variables used for timer */
-uint16_t PrescalerValue = 0;
-TIM_HandleTypeDef htim4;
-TIM_OC_InitTypeDef sConfigTim4;
-
-/* Variables used during Systick ISR*/
-uint8_t Counter  = 0x00;
-__IO uint16_t MaxAcceleration = 0;
-volatile uint32_t togglecounter = 0x00;
 
 /* Private function prototypes -----------------------------------------------*/
-static void Demo_Exec(void);
 static void SystemClock_Config(void);
-static void Error_Handler(void);
 
 uint32_t Cnt_HAL_CAN_RxFifo1FullCallback = 0;
 uint32_t Cnt_HAL_CAN_RxFifo1MsgPendingCallback = 0;
@@ -75,7 +53,18 @@ uint32_t Cnt_HAL_CAN_TxMailbox2CompleteCallback = 0;
 uint32_t Cnt_HAL_CAN_TxMailbox1CompleteCallback = 0;
 uint32_t Cnt_HAL_CAN_TxMailbox0CompleteCallback = 0;
 
-/* Private functions ---------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_CAN1_Init(void);
+/* USER CODE BEGIN PFP */
 void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)
 {
   if(Cnt_HAL_CAN_TxMailbox0CompleteCallback < UINT32_MAX)
@@ -154,21 +143,8 @@ void HAL_CAN_RxFifo1FullCallback(CAN_HandleTypeDef *hcan)
   }
 }
 
-CAN_HandleTypeDef hcan1 =
-{
-.Instance = CAN1,
-.Init.Prescaler = 14,
-.Init.Mode = CAN_MODE_SILENT_LOOPBACK,
-.Init.SyncJumpWidth = CAN_SJW_1TQ,
-.Init.TimeSeg1 = CAN_BS1_1TQ,
-.Init.TimeSeg2 = CAN_BS2_1TQ,
-.Init.TimeTriggeredMode = DISABLE,
-.Init.AutoBusOff = DISABLE,
-.Init.AutoWakeUp = DISABLE,
-.Init.AutoRetransmission = DISABLE,
-.Init.ReceiveFifoLocked = DISABLE,
-.Init.TransmitFifoPriority = DISABLE,
-};
+
+uint8_t magic = 0x55;
 void CAN_Send_DemoMessage()
 {
   const CAN_TxHeaderTypeDef TxHeader = {
@@ -181,7 +157,7 @@ void CAN_Send_DemoMessage()
 
   #define CAN_TXDATA_BUFFER_SIZE 32
   uint8_t TxData[CAN_TXDATA_BUFFER_SIZE];
-  memset(TxData, (~togglecounter)&0x5555, CAN_TXDATA_BUFFER_SIZE);
+  memset(TxData, magic, CAN_TXDATA_BUFFER_SIZE);
   uint32_t TxMailbox = 0;
 
   HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan1, 
@@ -189,316 +165,75 @@ void CAN_Send_DemoMessage()
                                                        (const uint8_t *) &TxData, 
                                                        &TxMailbox);
 }
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 
 /**
-  * @brief  Main program
-  * @param  None
-  * @retval None
+  * @brief  The application entry point.
+  * @retval int
   */
 int main(void)
 {
-  /* STM32F4xx HAL library initialization:
-       - Configure the Flash prefetch, instruction and Data caches
-       - Configure the Systick to generate an interrupt each 1 msec
-       - Set NVIC Group Priority to 4
-       - Global MSP (MCU Support Package) initialization
-     */
+
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-  const CAN_FilterTypeDef myFlt =
-{
-  .FilterIdHigh = 0xFFFF,          /*!< Specifies the filter identification number (MSBs for a 32-bit
-                                       configuration, first one for a 16-bit configuration).
-                                       This parameter must be a number between
-                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
-  .FilterIdLow = 0xFFFF,           /*!< Specifies the filter identification number (LSBs for a 32-bit
-                                       configuration, second one for a 16-bit configuration).
-                                       This parameter must be a number between
-                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+  /* USER CODE BEGIN Init */
 
-  .FilterMaskIdHigh = 0xFFFF,      /*!< Specifies the filter mask number or identification number,
-                                       according to the mode (MSBs for a 32-bit configuration,
-                                       first one for a 16-bit configuration).
-                                       This parameter must be a number between
-                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+  /* USER CODE END Init */
 
-  .FilterMaskIdLow = 0xFFFF,       /*!< Specifies the filter mask number or identification number,
-                                       according to the mode (LSBs for a 32-bit configuration,
-                                       second one for a 16-bit configuration).
-                                       This parameter must be a number between
-                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
-
-  .FilterFIFOAssignment = 0,  /*!< Specifies the FIFO (0 or 1U) which will be assigned to the filter.
-                                       This parameter can be a value of @ref CAN_filter_FIFO */
-
-  .FilterBank = 13,            /*!< Specifies the filter bank which will be initialized.
-                                       For single CAN instance(14 dedicated filter banks),
-                                       this parameter must be a number between Min_Data = 0 and Max_Data = 13.
-                                       For dual CAN instances(28 filter banks shared),
-                                       this parameter must be a number between Min_Data = 0 and Max_Data = 27. */
-
-  .FilterMode = 0,            /*!< Specifies the filter mode to be initialized.
-                                       This parameter can be a value of @ref CAN_filter_mode */
-
-  .FilterScale = 0,          /*!< Specifies the filter scale.
-                                       This parameter can be a value of @ref CAN_filter_scale */
-
-  .FilterActivation = 1,     /*!< Enable or disable the filter.
-                                       This parameter can be a value of @ref CAN_filter_activation */
-
-  .SlaveStartFilterBank = 14  /*!< Select the start filter bank for the slave CAN instance.
-                                       For single CAN instances, this parameter is meaningless.
-                                       For dual CAN instances, all filter banks with lower index are assigned to master
-                                       CAN instance, whereas all filter banks with greater index are assigned to slave
-                                       CAN instance.
-                                       This parameter must be a number between Min_Data = 0 and Max_Data = 27. */
-
-};
-
-  /* Configure LED3, LED4, LED5 and LED6 */
-  BSP_LED_Init(LED3);
-  BSP_LED_Init(LED4);
-  BSP_LED_Init(LED5);
-  BSP_LED_Init(LED6);
-
-  /* Configure the system clock to 168 MHz */
+  /* Configure the system clock */
   SystemClock_Config();
-  /* SysTick end of count event each 10ms */
-  SystemCoreClock = HAL_RCC_GetHCLKFreq();
-  SysTick_Config(SystemCoreClock / 100);
-  HAL_CAN_Init(&hcan1);
-  HAL_CAN_Start(&hcan1);
-  HAL_CAN_ConfigFilter(&hcan1, &myFlt);
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_SDIO_CLK_ENABLE();
 
-  //HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+  /* USER CODE BEGIN SysInit */
 
-  /* Execute Demo application */
-  Demo_Exec();
-  
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_CAN1_Init();
+  /* USER CODE BEGIN 2 */
+
+  /* USER CODE END 2 */
+
   /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
   while (1)
-  {    
+  {
+    /* USER CODE END WHILE */
+    
+    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
 }
 
 /**
-  * @brief  Execute the demo application.
-  * @param  None
+  * @brief System Clock Configuration
   * @retval None
   */
-static void Demo_Exec(void)
+void SystemClock_Config(void)
 {
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  
-  /* Initialize Accelerometer MEMS */
-  if(BSP_ACCELERO_Init() != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler(); 
-  }
-
-  /* Reset UserButton_Pressed variable */
-  SleepModeRequest = 0x00;
-
-  BSP_LED_Off(LED4);
-  BSP_LED_Off(LED3);
-  BSP_LED_Off(LED5);
-  BSP_LED_Off(LED6);
-
-  while(1)
-  {
-    if (togglecounter == 100)
-    {
-      togglecounter = 0x00;
-      BSP_LED_Toggle(LED4);
-      BSP_LED_Toggle(LED3);
-      BSP_LED_Toggle(LED5);
-      CAN_Send_DemoMessage();
-    }
-    /* Waiting USER Button is Released */
-    if(SleepModeRequest == 0x01)
-    {
-      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-      {}
-      HAL_SuspendTick();
-      HAL_PWR_EnterSLEEPMode(0,PWR_SLEEPENTRY_WFI);
-      // Can be used for deeper sleep, but couldn't get to work (most pins hiz)
-      // HAL_PWR_EnterSTANDBYMode();
-    }
-  }
-}
-
-/**
-  * @brief  Configures the TIM Peripheral.
-  * @param  None
-  * @retval None
+  /** Configure the main internal regulator output voltage
   */
-static void TIM4_Config(void)
-{
-  /* -----------------------------------------------------------------------
-  TIM4 Configuration: Output Compare Timing Mode:
-  
-  In this example TIM4 input clock (TIM4CLK) is set to 2 * APB1 clock (PCLK1), 
-  since APB1 prescaler is different from 1 (APB1 Prescaler = 4, see system_stm32f4xx.c file).
-  TIM4CLK = 2 * PCLK1  
-  PCLK1 = HCLK / 4 
-  => TIM4CLK = 2*(HCLK / 4) = HCLK/2 = SystemCoreClock/2
-  
-  To get TIM4 counter clock at 2 KHz, the prescaler is computed as follows:
-  Prescaler = (TIM4CLK / TIM4 counter clock) - 1
-  Prescaler = (84 MHz/(2 * 2 KHz)) - 1 = 41999
-  
-  To get TIM4 output clock at 1 Hz, the period (ARR)) is computed as follows:
-  ARR = (TIM4 counter clock / TIM4 output clock) - 1
-  = 1999
-  
-  TIM4 Channel1 duty cycle = (TIM4_CCR1/ TIM4_ARR)* 100 = 50%
-  TIM4 Channel2 duty cycle = (TIM4_CCR2/ TIM4_ARR)* 100 = 50%
-  TIM4 Channel3 duty cycle = (TIM4_CCR3/ TIM4_ARR)* 100 = 50%
-  TIM4 Channel4 duty cycle = (TIM4_CCR4/ TIM4_ARR)* 100 = 50%
-  
-  ==> TIM4_CCRx = TIM4_ARR/2 = 1000  (where x = 1, 2, 3 and 4).
-  ----------------------------------------------------------------------- */ 
-  
-  /* Compute the prescaler value */
-  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 2000) - 1;
-  
-  /* Time base configuration */
-  htim4.Instance             = TIM4;
-  htim4.Init.Period          = TIM_ARR;
-  htim4.Init.Prescaler       = PrescalerValue;
-  htim4.Init.ClockDivision   = 0;
-  htim4.Init.CounterMode     = TIM_COUNTERMODE_UP;
-  if(HAL_TIM_PWM_Init(&htim4) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* TIM PWM1 Mode configuration: Channel */
-  /* Output Compare Timing Mode configuration: Channel1 */
-  sConfigTim4.OCMode = TIM_OCMODE_PWM1;
-  sConfigTim4.OCIdleState = TIM_CCx_ENABLE;
-  sConfigTim4.Pulse = TIM_CCR;
-  sConfigTim4.OCPolarity = TIM_OCPOLARITY_HIGH;
-  
-  /* Output Compare PWM1 Mode configuration: Channel1 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_1) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* Output Compare PWM1 Mode configuration: Channel2 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_2) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* Output Compare PWM1 Mode configuration: Channel3 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_3) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-  /* Output Compare PWM1 Mode configuration: Channel4 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_4) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-}
-
-/**
-  * @brief  SYSTICK callback.
-  * @param  None
-  * @retval None
-  */
-void HAL_SYSTICK_Callback(void)
-{
-  togglecounter++;
-}
-
-/**
-  * @brief  EXTI line detection callbacks.
-  * @param  GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if(GPIO_Pin == KEY_BUTTON_PIN) 
-  {
-    if(SleepModeRequest == 0x01)
-    {
-      HAL_ResumeTick();
-      /* Waiting USER Button is Released */
-      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-      {}
-      SleepModeRequest = 0x00;
-    }
-    else
-    {
-      SleepModeRequest = 0x01;
-    }
-  }
-}
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-static void Error_Handler(void)
-{
-  /* Turn LED4 on */
-  BSP_LED_On(LED4);
-  while(1)
-  {
-  }
-}
-
-/**
-  * @brief  System Clock Configuration
-  *         The system Clock is configured as follow : 
-  *            System Clock source            = PLL (HSE)
-  *            SYSCLK(Hz)                     = 168000000
-  *            HCLK(Hz)                       = 168000000
-  *            AHB Prescaler                  = 1
-  *            APB1 Prescaler                 = 4
-  *            APB2 Prescaler                 = 2
-  *            HSE Frequency(Hz)              = 8000000
-  *            PLL_M                          = 8
-  *            PLL_N                          = 336
-  *            PLL_P                          = 2
-  *            PLL_Q                          = 7
-  *            VDD(V)                         = 3.3
-  *            Main regulator output voltage  = Scale1 mode
-  *            Flash Latency(WS)              = 5
-  * @param  None
-  * @retval None
-  */
-static void SystemClock_Config(void)
-{
-  RCC_ClkInitTypeDef RCC_ClkInitStruct;
-  memset(&RCC_ClkInitStruct, 0, sizeof(RCC_ClkInitTypeDef));
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  memset(&RCC_OscInitStruct, 0, sizeof(RCC_OscInitTypeDef));
-
-  /* Enable Power Control clock */
   __HAL_RCC_PWR_CLK_ENABLE();
-
-  __HAL_RCC_SYSCFG_CLK_ENABLE();
-  
-  /* The voltage scaling allows optimizing the power consumption when the device is 
-     clocked below the maximum system frequency, to update the voltage scaling value 
-     regarding system frequency refer to product datasheet.  */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  
-  /* Enable HSE Oscillator and activate PLL with HSE as source */
+
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -507,27 +242,130 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLN = 336;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
-  HAL_RCC_OscConfig(&RCC_OscInitStruct);
-  
-  /* Select PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 
-     clocks dividers */
-  RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;  
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  /* STM32F405x/407x/415x/417x Revision Z and upper devices: prefetch is supported  */
-  if (HAL_GetREVID() >= 0x1001)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {
-    /* Enable the Flash prefetch */
-    __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+    Error_Handler();
   }
 }
 
-#ifdef  USE_FULL_ASSERT
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
 
+  /* USER CODE BEGIN CAN1_Init 0 */
+
+  /* USER CODE END CAN1_Init 0 */
+
+  /* USER CODE BEGIN CAN1_Init 1 */
+
+  /* USER CODE END CAN1_Init 1 */
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 14;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeTriggeredMode = DISABLE;
+  hcan1.Init.AutoBusOff = DISABLE;
+  hcan1.Init.AutoWakeUp = DISABLE;
+  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.ReceiveFifoLocked = DISABLE;
+  hcan1.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CAN1_Init 2 */
+
+  /* USER CODE END CAN1_Init 2 */
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PDM_OUT_Pin */
+  GPIO_InitStruct.Pin = PDM_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+  HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : BOOT1_Pin */
+  GPIO_InitStruct.Pin = BOOT1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin */
+  GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/* USER CODE BEGIN 4 */
+
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
+}
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -535,22 +373,11 @@ static void SystemClock_Config(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t* file, uint32_t line)
+void assert_failed(uint8_t *file, uint32_t line)
 {
+  /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-  /* Infinite loop */
-  while (1)
-  {
-  }
+  /* USER CODE END 6 */
 }
-#endif
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
+#endif /* USE_FULL_ASSERT */

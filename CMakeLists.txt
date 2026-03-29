@@ -18,8 +18,6 @@ set(DRIVER_SOURCE_FILES
 "./STM32CubeIDE/Application/User/sysmem.c"
 "./Drivers/BSP/Components/lis302dl/lis302dl.c"
 "./Drivers/BSP/Components/lis3dsh/lis3dsh.c"
-"./Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c"
-"./Drivers/BSP/STM32F4-Discovery/stm32f4_discovery_accelerometer.c"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c"
 "./Src/stm32f4xx_hal_msp.c"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c"
