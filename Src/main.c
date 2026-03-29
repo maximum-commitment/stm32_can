@@ -67,22 +67,6 @@ static void Demo_Exec(void);
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
-CAN_HandleTypeDef hcan1 =
-{
-.Instance = CAN1,
-.Init.Prescaler = 28,
-.Init.Mode = CAN_MODE_LOOPBACK,
-.Init.SyncJumpWidth = CAN_SJW_1TQ,
-.Init.TimeSeg1 = CAN_BS1_1TQ,
-.Init.TimeSeg2 = CAN_BS2_1TQ,
-.Init.TimeTriggeredMode = DISABLE,
-.Init.AutoBusOff = DISABLE,
-.Init.AutoWakeUp = ENABLE,
-.Init.AutoRetransmission = DISABLE,
-.Init.ReceiveFifoLocked = DISABLE,
-.Init.TransmitFifoPriority = DISABLE,
-};
-
 uint32_t Cnt_HAL_CAN_RxFifo1FullCallback = 0;
 uint32_t Cnt_HAL_CAN_RxFifo1MsgPendingCallback = 0;
 uint32_t Cnt_HAL_CAN_RxFifo0FullCallback = 0;
@@ -170,10 +154,25 @@ void HAL_CAN_RxFifo1FullCallback(CAN_HandleTypeDef *hcan)
   }
 }
 
+CAN_HandleTypeDef hcan1 =
+{
+.Instance = CAN1,
+.Init.Prescaler = 14,
+.Init.Mode = CAN_MODE_SILENT_LOOPBACK,
+.Init.SyncJumpWidth = CAN_SJW_1TQ,
+.Init.TimeSeg1 = CAN_BS1_1TQ,
+.Init.TimeSeg2 = CAN_BS2_1TQ,
+.Init.TimeTriggeredMode = DISABLE,
+.Init.AutoBusOff = DISABLE,
+.Init.AutoWakeUp = DISABLE,
+.Init.AutoRetransmission = DISABLE,
+.Init.ReceiveFifoLocked = DISABLE,
+.Init.TransmitFifoPriority = DISABLE,
+};
 void CAN_Send_DemoMessage()
 {
   const CAN_TxHeaderTypeDef TxHeader = {
-      .StdId=0x1U,
+      .StdId=0x555U,
       .ExtId=0x0U,
       .IDE=CAN_ID_STD,
       .RTR = 0x0U,
@@ -182,7 +181,7 @@ void CAN_Send_DemoMessage()
 
   #define CAN_TXDATA_BUFFER_SIZE 32
   uint8_t TxData[CAN_TXDATA_BUFFER_SIZE];
-  memset(TxData, 0, CAN_TXDATA_BUFFER_SIZE);
+  memset(TxData, ~togglecounter, CAN_TXDATA_BUFFER_SIZE);
   uint32_t TxMailbox = 0;
 
   HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan1, 
@@ -205,9 +204,59 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();
+  const CAN_FilterTypeDef myFlt =
+{
+  .FilterIdHigh = 0xFFFF,          /*!< Specifies the filter identification number (MSBs for a 32-bit
+                                       configuration, first one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
-  HAL_CAN_Init(&hcan1);
-  HAL_CAN_Start(&hcan1);
+  .FilterIdLow = 0xFFFF,           /*!< Specifies the filter identification number (LSBs for a 32-bit
+                                       configuration, second one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  .FilterMaskIdHigh = 0xFFFF,      /*!< Specifies the filter mask number or identification number,
+                                       according to the mode (MSBs for a 32-bit configuration,
+                                       first one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  .FilterMaskIdLow = 0xFFFF,       /*!< Specifies the filter mask number or identification number,
+                                       according to the mode (LSBs for a 32-bit configuration,
+                                       second one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  .FilterFIFOAssignment = 0,  /*!< Specifies the FIFO (0 or 1U) which will be assigned to the filter.
+                                       This parameter can be a value of @ref CAN_filter_FIFO */
+
+  .FilterBank = 13,            /*!< Specifies the filter bank which will be initialized.
+                                       For single CAN instance(14 dedicated filter banks),
+                                       this parameter must be a number between Min_Data = 0 and Max_Data = 13.
+                                       For dual CAN instances(28 filter banks shared),
+                                       this parameter must be a number between Min_Data = 0 and Max_Data = 27. */
+
+  .FilterMode = 0,            /*!< Specifies the filter mode to be initialized.
+                                       This parameter can be a value of @ref CAN_filter_mode */
+
+  .FilterScale = 0,          /*!< Specifies the filter scale.
+                                       This parameter can be a value of @ref CAN_filter_scale */
+
+  .FilterActivation = 1,     /*!< Enable or disable the filter.
+                                       This parameter can be a value of @ref CAN_filter_activation */
+
+  .SlaveStartFilterBank = 14  /*!< Select the start filter bank for the slave CAN instance.
+                                       For single CAN instances, this parameter is meaningless.
+                                       For dual CAN instances, all filter banks with lower index are assigned to master
+                                       CAN instance, whereas all filter banks with greater index are assigned to slave
+                                       CAN instance.
+                                       This parameter must be a number between Min_Data = 0 and Max_Data = 27. */
+
+};
+  /* SysTick end of count event each 10ms */
+  SystemCoreClock = HAL_RCC_GetHCLKFreq();
+  SysTick_Config(SystemCoreClock / 100);
 
   /* Configure LED3, LED4, LED5 and LED6 */
   BSP_LED_Init(LED3);
@@ -217,9 +266,14 @@ int main(void)
 
   /* Configure the system clock to 168 MHz */
   SystemClock_Config();
+  HAL_CAN_Init(&hcan1);
+  HAL_CAN_Start(&hcan1);
+  HAL_CAN_ConfigFilter(&hcan1, &myFlt);
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_SDIO_CLK_ENABLE();
 
-  /* Configure USER Button */
-  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI); 
+  //HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
   /* Execute Demo application */
   Demo_Exec();
@@ -249,9 +303,6 @@ static void Demo_Exec(void)
   /* Reset UserButton_Pressed variable */
   SleepModeRequest = 0x00;
 
-  /* SysTick end of count event each 10ms */
-  SystemCoreClock = HAL_RCC_GetHCLKFreq();
-  SysTick_Config(SystemCoreClock / 100);
   BSP_LED_Off(LED4);
   BSP_LED_Off(LED3);
   BSP_LED_Off(LED5);
@@ -433,10 +484,14 @@ static void Error_Handler(void)
 static void SystemClock_Config(void)
 {
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
+  memset(&RCC_ClkInitStruct, 0, sizeof(RCC_ClkInitTypeDef));
   RCC_OscInitTypeDef RCC_OscInitStruct;
+  memset(&RCC_OscInitStruct, 0, sizeof(RCC_OscInitTypeDef));
 
   /* Enable Power Control clock */
   __HAL_RCC_PWR_CLK_ENABLE();
+
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
   
   /* The voltage scaling allows optimizing the power consumption when the device is 
      clocked below the maximum system frequency, to update the voltage scaling value 
