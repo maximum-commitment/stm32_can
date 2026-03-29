@@ -17,6 +17,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <string.h>
 #include "main.h"
 #include "stm32f4xx_hal_pwr.h"
 
@@ -51,9 +52,6 @@ __IO uint8_t DemoEnterCondition = 0x00;
 __IO int16_t X_Offset, Y_Offset;
 int16_t Buffer[3];
 
-/* MEMS thresholds {Low/High} */
-static int16_t ThreadholdAcceleroLow = -110, ThreadholdAcceleroHigh = 110;
-
 /* Variables used for timer */
 uint16_t PrescalerValue = 0;
 TIM_HandleTypeDef htim4;
@@ -65,12 +63,119 @@ __IO uint16_t MaxAcceleration = 0;
 volatile uint32_t togglecounter = 0x00;
 
 /* Private function prototypes -----------------------------------------------*/
-static void TIM4_Config(void);
 static void Demo_Exec(void);
 static void SystemClock_Config(void);
 static void Error_Handler(void);
 
+CAN_HandleTypeDef hcan;
+
+uint32_t Cnt_HAL_CAN_RxFifo1FullCallback = 0;
+uint32_t Cnt_HAL_CAN_RxFifo1MsgPendingCallback = 0;
+uint32_t Cnt_HAL_CAN_RxFifo0FullCallback = 0;
+uint32_t Cnt_HAL_CAN_RxFifo0MsgPendingCallback = 0;
+uint32_t Cnt_HAL_CAN_TxMailbox2CompleteCallback = 0;
+uint32_t Cnt_HAL_CAN_TxMailbox1CompleteCallback = 0;
+uint32_t Cnt_HAL_CAN_TxMailbox0CompleteCallback = 0;
+
 /* Private functions ---------------------------------------------------------*/
+void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_TxMailbox0CompleteCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_TxMailbox0CompleteCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_TxMailbox0CompleteCallback = 0;
+  }
+}
+void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_TxMailbox1CompleteCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_TxMailbox1CompleteCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_TxMailbox1CompleteCallback = 0;
+  }
+}
+void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_TxMailbox2CompleteCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_TxMailbox2CompleteCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_TxMailbox2CompleteCallback = 0;
+  }
+}
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_RxFifo0MsgPendingCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_RxFifo0MsgPendingCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_RxFifo0MsgPendingCallback = 0;
+  }
+}
+void HAL_CAN_RxFifo0FullCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_RxFifo0FullCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_RxFifo0FullCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_RxFifo0FullCallback = 0;
+  }
+}
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_RxFifo1MsgPendingCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_RxFifo1MsgPendingCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_RxFifo1MsgPendingCallback = 0;
+  }
+}
+void HAL_CAN_RxFifo1FullCallback(CAN_HandleTypeDef *hcan)
+{
+  if(Cnt_HAL_CAN_RxFifo1FullCallback < UINT32_MAX)
+  {
+    Cnt_HAL_CAN_RxFifo1FullCallback++;
+  }
+  else
+  {
+    Cnt_HAL_CAN_RxFifo1FullCallback = 0;
+  }
+}
+
+void CAN_Send_DemoMessage()
+{
+  const CAN_TxHeaderTypeDef TxHeader = {
+      .StdId=0x1U,
+      .ExtId=0x0U,
+      .IDE=CAN_ID_STD,
+      .RTR = 0x0U,
+      .DLC = 0x8U,
+      .TransmitGlobalTime = DISABLE};
+
+  #define CAN_TXDATA_BUFFER_SIZE 32
+  uint8_t TxData[CAN_TXDATA_BUFFER_SIZE];
+  memset(TxData, 0, CAN_TXDATA_BUFFER_SIZE);
+  uint32_t TxMailbox = 0;
+
+  HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan, 
+                                                       &TxHeader,
+                                                       (const uint8_t *) &TxData, 
+                                                       &TxMailbox);
+}
 
 /**
   * @brief  Main program
@@ -86,6 +191,9 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();
+
+  HAL_CAN_Init(&hcan);
+  HAL_CAN_Start(&hcan);
 
   /* Configure LED3, LED4, LED5 and LED6 */
   BSP_LED_Init(LED3);
@@ -153,122 +261,6 @@ static void Demo_Exec(void)
       HAL_PWR_EnterSLEEPMode(0,PWR_SLEEPENTRY_WFI);
       // Can be used for deeper sleep, but couldn't get to work (most pins hiz)
       // HAL_PWR_EnterSTANDBYMode();
-    }
-  }
-}
-
-/**
-  * @brief  Configures the TIM Peripheral.
-  * @param  None
-  * @retval None
-  */
-static void TIM4_Config(void)
-{
-  /* -----------------------------------------------------------------------
-  TIM4 Configuration: Output Compare Timing Mode:
-  
-  In this example TIM4 input clock (TIM4CLK) is set to 2 * APB1 clock (PCLK1), 
-  since APB1 prescaler is different from 1 (APB1 Prescaler = 4, see system_stm32f4xx.c file).
-  TIM4CLK = 2 * PCLK1  
-  PCLK1 = HCLK / 4 
-  => TIM4CLK = 2*(HCLK / 4) = HCLK/2 = SystemCoreClock/2
-  
-  To get TIM4 counter clock at 2 KHz, the prescaler is computed as follows:
-  Prescaler = (TIM4CLK / TIM4 counter clock) - 1
-  Prescaler = (84 MHz/(2 * 2 KHz)) - 1 = 41999
-  
-  To get TIM4 output clock at 1 Hz, the period (ARR)) is computed as follows:
-  ARR = (TIM4 counter clock / TIM4 output clock) - 1
-  = 1999
-  
-  TIM4 Channel1 duty cycle = (TIM4_CCR1/ TIM4_ARR)* 100 = 50%
-  TIM4 Channel2 duty cycle = (TIM4_CCR2/ TIM4_ARR)* 100 = 50%
-  TIM4 Channel3 duty cycle = (TIM4_CCR3/ TIM4_ARR)* 100 = 50%
-  TIM4 Channel4 duty cycle = (TIM4_CCR4/ TIM4_ARR)* 100 = 50%
-  
-  ==> TIM4_CCRx = TIM4_ARR/2 = 1000  (where x = 1, 2, 3 and 4).
-  ----------------------------------------------------------------------- */ 
-  
-  /* Compute the prescaler value */
-  PrescalerValue = (uint16_t) ((SystemCoreClock /2) / 2000) - 1;
-  
-  /* Time base configuration */
-  htim4.Instance             = TIM4;
-  htim4.Init.Period          = TIM_ARR;
-  htim4.Init.Prescaler       = PrescalerValue;
-  htim4.Init.ClockDivision   = 0;
-  htim4.Init.CounterMode     = TIM_COUNTERMODE_UP;
-  if(HAL_TIM_PWM_Init(&htim4) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* TIM PWM1 Mode configuration: Channel */
-  /* Output Compare Timing Mode configuration: Channel1 */
-  sConfigTim4.OCMode = TIM_OCMODE_PWM1;
-  sConfigTim4.OCIdleState = TIM_CCx_ENABLE;
-  sConfigTim4.Pulse = TIM_CCR;
-  sConfigTim4.OCPolarity = TIM_OCPOLARITY_HIGH;
-  
-  /* Output Compare PWM1 Mode configuration: Channel1 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_1) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* Output Compare PWM1 Mode configuration: Channel2 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_2) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-
-  /* Output Compare PWM1 Mode configuration: Channel3 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_3) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-  /* Output Compare PWM1 Mode configuration: Channel4 */
-  if(HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigTim4, TIM_CHANNEL_4) != HAL_OK)
-  {
-    /* Initialization Error */
-    Error_Handler();
-  }
-}
-
-/**
-  * @brief  SYSTICK callback.
-  * @param  None
-  * @retval None
-  */
-void HAL_SYSTICK_Callback(void)
-{
-  togglecounter++;
-}
-
-/**
-  * @brief  EXTI line detection callbacks.
-  * @param  GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  if(GPIO_Pin == KEY_BUTTON_PIN) 
-  {
-    if(SleepModeRequest == 0x01)
-    {
-      HAL_ResumeTick();
-      /* Waiting USER Button is Released */
-      while (BSP_PB_GetState(BUTTON_KEY) != KEY_NOT_PRESSED)
-      {}
-      SleepModeRequest = 0x00;
-    }
-    else
-    {
-      SleepModeRequest = 0x01;
     }
   }
 }

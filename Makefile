@@ -1296,6 +1296,30 @@ Src/stm32f4xx_hal_msp.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_hal_msp.c.s
 .PHONY : Src/stm32f4xx_hal_msp.c.s
 
+Src/stm32f4xx_it.o: Src/stm32f4xx_it.c.o
+.PHONY : Src/stm32f4xx_it.o
+
+# target to build an object file
+Src/stm32f4xx_it.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.o
+.PHONY : Src/stm32f4xx_it.c.o
+
+Src/stm32f4xx_it.i: Src/stm32f4xx_it.c.i
+.PHONY : Src/stm32f4xx_it.i
+
+# target to preprocess a source file
+Src/stm32f4xx_it.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.i
+.PHONY : Src/stm32f4xx_it.c.i
+
+Src/stm32f4xx_it.s: Src/stm32f4xx_it.c.s
+.PHONY : Src/stm32f4xx_it.s
+
+# target to generate assembly for a file
+Src/stm32f4xx_it.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.s
+.PHONY : Src/stm32f4xx_it.c.s
+
 Src/system_stm32f4xx.o: Src/system_stm32f4xx.c.o
 .PHONY : Src/system_stm32f4xx.o
 
@@ -1475,6 +1499,9 @@ help:
 	@echo "... Src/stm32f4xx_hal_msp.o"
 	@echo "... Src/stm32f4xx_hal_msp.i"
 	@echo "... Src/stm32f4xx_hal_msp.s"
+	@echo "... Src/stm32f4xx_it.o"
+	@echo "... Src/stm32f4xx_it.i"
+	@echo "... Src/stm32f4xx_it.s"
 	@echo "... Src/system_stm32f4xx.o"
 	@echo "... Src/system_stm32f4xx.i"
 	@echo "... Src/system_stm32f4xx.s"

@@ -33,7 +33,6 @@
   */
 #define HAL_MODULE_ENABLED         
 /* #define HAL_ADC_MODULE_ENABLED      */
-/* #define HAL_CAN_MODULE_ENABLED      */
 #define HAL_CAN_MODULE_ENABLED
 /* #define HAL_CRC_MODULE_ENABLED      */ 
 /* #define HAL_CRYP_MODULE_ENABLED     */ 
@@ -70,7 +69,6 @@
 #define HAL_CORTEX_MODULE_ENABLED   
 #define HAL_PCD_MODULE_ENABLED      
 /* #define HAL_HCD_MODULE_ENABLED      */
-
 
 /* ########################## HSE/HSI Values adaptation ##################### */
 /**
