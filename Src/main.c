@@ -171,7 +171,8 @@ void CAN_Send_DemoMessage()
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
-
+uint32_t RxData[32];
+HAL_StatusTypeDef rx_status = 0;
 /**
   * @brief  The application entry point.
   * @retval int
@@ -203,7 +204,59 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
+const CAN_FilterTypeDef myFlt =
+{
+  .FilterIdHigh = 0xFFFF,          /*!< Specifies the filter identification number (MSBs for a 32-bit
+                                       configuration, first one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
+  .FilterIdLow = 0xFFFF,           /*!< Specifies the filter identification number (LSBs for a 32-bit
+                                       configuration, second one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  .FilterMaskIdHigh = 0xFFFF,      /*!< Specifies the filter mask number or identification number,
+                                       according to the mode (MSBs for a 32-bit configuration,
+                                       first one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  .FilterMaskIdLow = 0xFFFF,       /*!< Specifies the filter mask number or identification number,
+                                       according to the mode (LSBs for a 32-bit configuration,
+                                       second one for a 16-bit configuration).
+                                       This parameter must be a number between
+                                       Min_Data = 0x0000 and Max_Data = 0xFFFF. */
+
+  .FilterFIFOAssignment = 0,  /*!< Specifies the FIFO (0 or 1U) which will be assigned to the filter.
+                                       This parameter can be a value of @ref CAN_filter_FIFO */
+
+  .FilterBank = 0,            /*!< Specifies the filter bank which will be initialized.
+                                       For single CAN instance(14 dedicated filter banks),
+                                       this parameter must be a number between Min_Data = 0 and Max_Data = 13.
+                                       For dual CAN instances(28 filter banks shared),
+                                       this parameter must be a number between Min_Data = 0 and Max_Data = 27. */
+
+  .FilterMode = 0,            /*!< Specifies the filter mode to be initialized.
+                                       This parameter can be a value of @ref CAN_filter_mode */
+
+  .FilterScale = 0,          /*!< Specifies the filter scale.
+                                       This parameter can be a value of @ref CAN_filter_scale */
+
+  .FilterActivation = 1,     /*!< Enable or disable the filter.
+                                       This parameter can be a value of @ref CAN_filter_activation */
+
+  .SlaveStartFilterBank = 0  /*!< Select the start filter bank for the slave CAN instance.
+                                       For single CAN instances, this parameter is meaningless.
+                                       For dual CAN instances, all filter banks with lower index are assigned to master
+                                       CAN instance, whereas all filter banks with greater index are assigned to slave
+                                       CAN instance.
+                                       This parameter must be a number between Min_Data = 0 and Max_Data = 27. */
+
+};
+
+  HAL_CAN_ConfigFilter(&hcan1, &myFlt);
+  HAL_CAN_Start(&hcan1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -211,7 +264,41 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    if(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)!=0)
+    { CAN_Send_DemoMessage(); }
+    HAL_Delay(50);
+
     
+  CAN_RxHeaderTypeDef RxHeader = 
+{
+  .StdId = 0x555,    /*!< Specifies the standard identifier.
+                          This parameter must be a number between Min_Data = 0 and Max_Data = 0x7FF. */
+
+  .ExtId = 0,    /*!< Specifies the extended identifier.
+                          This parameter must be a number between Min_Data = 0 and Max_Data = 0x1FFFFFFF. */
+
+  .IDE = CAN_ID_STD,      /*!< Specifies the type of identifier for the message that will be transmitted.
+                          This parameter can be a value of @ref CAN_identifier_type */
+
+  .RTR = 0,      /*!< Specifies the type of frame for the message that will be transmitted.
+                          This parameter can be a value of @ref CAN_remote_transmission_request */
+
+  .DLC = 8,      /*!< Specifies the length of the frame that will be transmitted.
+                          This parameter must be a number between Min_Data = 0 and Max_Data = 8. */
+
+  .Timestamp = 0xFFFF, /*!< Specifies the timestamp counter value captured on start of frame reception.
+                          @note: Time Triggered Communication Mode must be enabled.
+                          This parameter must be a number between Min_Data = 0 and Max_Data = 0xFFFF. */
+
+  .FilterMatchIndex = 0 /*!< Specifies the index of matching acceptance filter element.
+                          This parameter must be a number between Min_Data = 0 and Max_Data = 0xFF. */
+
+};
+    
+    if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
+    { 
+      rx_status =  HAL_CAN_GetRxMessage(&hcan1, 0, &RxHeader, RxData); 
+    }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -280,9 +367,9 @@ static void MX_CAN1_Init(void)
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 14;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
-  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_2TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_2TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
