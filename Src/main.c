@@ -206,8 +206,8 @@ int main(void)
      */
   HAL_Init();
 
-  HAL_CAN_Init(&hcan);
-  HAL_CAN_Start(&hcan);
+  HAL_CAN_Init(&hcan1);
+  HAL_CAN_Start(&hcan1);
 
   /* Configure LED3, LED4, LED5 and LED6 */
   BSP_LED_Init(LED3);
