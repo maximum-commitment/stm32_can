@@ -141,15 +141,6 @@ uint32_t BSP_GetVersion(void)
   return __STM32F4_DISCO_BSP_VERSION;
 }
 
-
-CAN_HandleTypeDef hcan1;
-
-void DISCO_CAN_Init(void)
-{
-  HAL_CAN_Init(&hcan1);
-}
-
-
 /**
   * @brief  Configures LED GPIO.
   * @param  Led: Specifies the Led to be configured. 
