@@ -1,171 +1,20 @@
-/*
- * FreeRTOS V202212.00
- * Copyright (C) 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- * https://www.FreeRTOS.org
- * https://github.com/FreeRTOS
- *
- */
-
 /******************************************************************************
- * >>>>>> NOTE 1: <<<<<<
- *
- * main() can be configured to create either a very simple LED flasher demo, or
- * a more comprehensive test/demo application.
- *
- * To create a very simple LED flasher example, set the
- * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY constant (defined below) to 1.  When
- * this is done, only the standard demo flash tasks are created.  The standard
- * demo flash example creates three tasks, each of which toggle an LED at a
- * fixed but different frequency.
- *
- * To create a more comprehensive test and demo application, set
- * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY to 0.
- *
- * >>>>>> NOTE 2: <<<<<<
- *
- * In addition to the normal set of standard demo tasks, the comprehensive test
- * makes heavy use of the floating point unit, and forces floating point
- * instructions to be used from interrupts that nest three deep.  The nesting
- * starts from the tick hook function, resulting is an abnormally long context
- * switch time.  This is done purely to stress test the FPU context switching
- * implementation, and that part of the test can be removed by setting
- * configUSE_TICK_HOOK to 0 in FreeRTOSConfig.h.
- ******************************************************************************
  *
  * main() creates all the demo application tasks and software timers, then starts
- * the scheduler.  The web documentation provides more details of the standard
- * demo application tasks, which provide no particular functionality, but do
- * provide a good example of how to use the FreeRTOS API.
+ * the scheduler. 
  *
- * In addition to the standard demo tasks, the following tasks and tests are
- * defined and/or created within this file:
- *
- * "Reg test" tasks - These fill both the core and floating point registers with
- * known values, then check that each register maintains its expected value for
- * the lifetime of the task.  Each task uses a different set of values.  The reg
- * test tasks execute with a very low priority, so get preempted very
- * frequently.  A register containing an unexpected value is indicative of an
- * error in the context switching mechanism.
- *
- * "Check" timer - The check software timer period is initially set to three
- * seconds.  The callback function associated with the check software timer
- * checks that all the standard demo tasks, and the register check tasks, are
- * not only still executing, but are executing without reporting any errors.  If
- * the check software timer discovers that a task has either stalled, or
- * reported an error, then it changes its own execution period from the initial
- * three seconds, to just 200ms.  The check software timer callback function
- * also toggles an LED each time it is called.  This provides a visual
- * indication of the system status:  If the LED toggles every three seconds,
- * then no issues have been discovered.  If the LED toggles every 200ms, then
- * an issue has been discovered with at least one task.
- *
- * Tick hook - The application tick hook is called from the schedulers tick
- * interrupt service routine when configUSE_TICK_HOOK is set to 1 in
- * FreeRTOSConfig.h.  In this example, the tick hook is used to test the kernels
- * handling of the floating point units (FPU) context, both at the task level
- * and when nesting interrupts access the floating point unit registers.  The
- * tick hook function first fills the FPU registers with a known value, it
- * then triggers a medium priority interrupt.  The medium priority interrupt
- * fills the FPU registers with a different value, and triggers a high priority
- * interrupt.  The high priority interrupt once again fills the the FPU
- * registers with a known value before returning to the medium priority
- * interrupt.  The medium priority interrupt checks that the FPU registers
- * contain the values that it wrote to them, then returns to the tick hook
- * function.  Finally, the tick hook function checks that the FPU registers
- * contain the values that it wrote to them, before it too returns.
- *
- * Button interrupt - The button marked "USER" on the starter kit is used to
- * demonstrate how to write an interrupt service routine, and how to synchronise
- * a task with an interrupt.  A task is created that blocks on a test semaphore.
- * When the USER button is pressed, the button interrupt handler gives the
- * semaphore, causing the task to unblock.  When the task unblocks, it simply
- * increments an execution count variable, then returns to block on the
- * semaphore again.
+ * This file was created based on demo application from FreeRTOS, but most of the
+ * content was removed. It is a basic led flasher
+ * 
  */
 
 /* Kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
-#include "timers.h"
-#include "semphr.h"
 
-/* Demo application includes. */
-#ifdef FREERTOS_TESTCODE
-#include "partest.h"
-#include "flash.h"
-#include "flop.h"
-#include "integer.h"
-#include "PollQ.h"
-#include "semtest.h"
-#include "dynamic.h"
-#include "BlockQ.h"
-#include "blocktim.h"
-#include "countsem.h"
-#include "GenQTest.h"
-#include "recmutex.h"
-#include "death.h"
-#endif
-
-/* Hardware and starter kit includes. */
-#ifdef FREERTOS_TESTCODE
-#include "stm32f4xx.h"
-#include "stm32f4xx_conf.h"
-#endif
-
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_cortex.h"
 #include "stm32f4xx_ll_system.h"
 #include "stm32f4xx_hal_exti.h"
 #include "stm32f4_discovery.h"
-
-/* Priorities for the demo application tasks. */
-#define mainFLASH_TASK_PRIORITY                    ( tskIDLE_PRIORITY + 1UL )
-#define mainQUEUE_POLL_PRIORITY                    ( tskIDLE_PRIORITY + 2UL )
-#define mainSEM_TEST_PRIORITY                      ( tskIDLE_PRIORITY + 1UL )
-#define mainBLOCK_Q_PRIORITY                       ( tskIDLE_PRIORITY + 2UL )
-#define mainCREATOR_TASK_PRIORITY                  ( tskIDLE_PRIORITY + 3UL )
-#define mainFLOP_TASK_PRIORITY                     ( tskIDLE_PRIORITY )
-
-/* The LED used by the check timer. */
-#define mainCHECK_LED                              ( 3UL )
-
-/* A block time of zero simply means "don't block". */
-#define mainDONT_BLOCK                             ( 0UL )
-
-/* The period after which the check timer will expire, in ms, provided no errors
- * have been reported by any of the standard demo tasks.  ms are converted to the
- * equivalent in ticks using the portTICK_PERIOD_MS constant. */
-#define mainCHECK_TIMER_PERIOD_MS                  ( 3000UL / portTICK_PERIOD_MS )
-
-/* The period at which the check timer will expire, in ms, if an error has been
- * reported in one of the standard demo tasks.  ms are converted to the equivalent
- * in ticks using the portTICK_PERIOD_MS constant. */
-#define mainERROR_CHECK_TIMER_PERIOD_MS            ( 200UL / portTICK_PERIOD_MS )
-
-/* Set mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY to 1 to create a simple demo.
- * Set mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY to 0 to create a much more
- * comprehensive test application.  See the comments at the top of this file, and
- * the documentation page on the http://www.FreeRTOS.org web site for more
- * information. */
-#define mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY    1
 
 /*-----------------------------------------------------------*/
 
@@ -224,16 +73,6 @@ int main( void )
     BSP_LED_On(LED6);
 
     Task_LEDFlash_StartTask();
-
-#ifdef COMPILEOUT_INITIAL_TEST_APP
-    /* The following function will only create more tasks and timers if
-     * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to 0 (at the top of this
-     * file).  See the comments at the top of this file for more information. */
-    prvOptionallyCreateComprehensveTestApplication();
-
-    /* Start the scheduler. */
-
-#endif
 
 	vTaskStartScheduler();
 
@@ -317,7 +156,6 @@ void EXTI9_5_IRQHandler( void )
 
     /* Only line 6 is enabled, so there is no need to test which line generated
      * the interrupt. */
-    //EXTI_ClearITPendingBit( EXTI_Line6 );
     /* Note trigger param appears to be unused by driver, perhaps will be in future update */
     /* Note callback pointer also unused, but this will likely be permanent */
     EXTI_HandleTypeDef hexti = {.Line = LL_SYSCFG_EXTI_LINE6, .PendingCallback = NULL};
