@@ -31,6 +31,8 @@
 *----------------------------------------------------------*/
 
 /* Scheduler includes. */
+#include <stdint.h>
+#include "system_stm32f4xx.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
@@ -273,6 +275,7 @@ void vPortSVCHandler( void )
         "   .ltorg                          \n"
         );
 }
+
 /*-----------------------------------------------------------*/
 
 static void prvPortStartFirstTask( void )
@@ -500,7 +503,6 @@ void vPortExitCritical( void )
     }
 }
 /*-----------------------------------------------------------*/
-
 void xPortPendSVHandler( void )
 {
     /* This is a naked function. */
@@ -556,7 +558,6 @@ void xPortPendSVHandler( void )
     );
 }
 /*-----------------------------------------------------------*/
-
 void xPortSysTickHandler( void )
 {
     /* The SysTick runs at the lowest interrupt priority, so when this interrupt

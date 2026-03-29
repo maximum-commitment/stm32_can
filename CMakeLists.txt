@@ -68,6 +68,7 @@ set(HAL_DRIVER_SOURCE
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_sdmmc.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_usb.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_exti.c"
+"Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c"
 )
 
 set(C_FLAGS

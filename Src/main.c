@@ -134,6 +134,7 @@
 #include "stm32f4xx_hal_cortex.h"
 #include "stm32f4xx_ll_system.h"
 #include "stm32f4xx_hal_exti.h"
+#include "stm32f4_discovery.h"
 
 /* Priorities for the demo application tasks. */
 #define mainFLASH_TASK_PRIORITY                    ( tskIDLE_PRIORITY + 1UL )
@@ -240,20 +241,46 @@ static SemaphoreHandle_t xTestSemaphore = NULL;
  * interrupt. */
 volatile unsigned long ulButtonPressCounts = 0UL;
 
-/*-----------------------------------------------------------*/
+static void vLEDFlashTask( void * pvParameters )
+{
+    /* Queue a message for printing to say the task has started. */
+    //vPrintDisplayMessage( &pcTaskStartMsg );
+
+    for( ; ; )
+    {
+        /* Delay for half the flash period then turn the LED on. */
+        vTaskDelay( (1000 / portTICK_PERIOD_MS) / ( TickType_t ) 2 );
+        BSP_LED_Toggle(LED4);
+
+        /* Delay for half the flash period then turn the LED off. */
+        vTaskDelay( (1000 / portTICK_PERIOD_MS) / ( TickType_t ) 2 );
+        BSP_LED_Toggle(LED4);;
+    }
+}
+
+static vStartLEDFlashTasks()
+{
+    static StaticTask_t xLEDTaskTCB;
+    static StackType_t uxLEDTaskStack[ configMINIMAL_STACK_SIZE ];
+
+    xTaskCreateStatic( vLEDFlashTask, "LEDx", configMINIMAL_STACK_SIZE, NULL, 4, &uxLEDTaskStack, &xLEDTaskTCB );
+}
 
 int main( void )
 {
     /* Configure the hardware ready to run the test. */
     prvSetupHardware();
-#ifdef FREERTOS_TESTCODE
-    /* Start standard demo/test application flash tasks.  See the comments at
-     * the top of this file.  The LED flash tasks are always created.  The other
-     * tasks are only created if mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to
-     * 0 (at the top of this file).  See the comments at the top of this file for
-     * more information. */
-    vStartLEDFlashTasks( mainFLASH_TASK_PRIORITY );
-#endif
+
+    BSP_LED_Init(LED3);
+    BSP_LED_Init(LED4);
+    BSP_LED_Init(LED5);
+    BSP_LED_Init(LED6);
+    BSP_LED_On(LED4);
+    BSP_LED_On(LED3);
+    BSP_LED_On(LED5);
+    BSP_LED_On(LED6);
+
+    vStartLEDFlashTasks();
 
 #ifdef COMPILEOUT_INITIAL_TEST_APP
     /* The following function will only create more tasks and timers if
@@ -262,8 +289,10 @@ int main( void )
     prvOptionallyCreateComprehensveTestApplication();
 
     /* Start the scheduler. */
-    vTaskStartScheduler();
+
 #endif
+
+    vTaskStartScheduler();
 
     /* If all is well, the scheduler will now be running, and the following line
      * will never be reached.  If the following line does execute, then there was
@@ -274,6 +303,55 @@ int main( void )
     {
     }
 }
+
+/* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
+implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
+used by the Idle task. */
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize )
+{
+    /* example implementation shown here */
+    /* If the buffers to be provided to the Idle task are declared inside this
+    function then they must be declared static - otherwise they will be allocated on
+    the stack and so not exists after this function exits. */
+    static StaticTask_t xIdleTaskTCB;
+    static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
+
+    /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
+    state will be stored. */
+    *ppxIdleTaskTCBBuffer = &xIdleTaskTCB;
+
+    /* Pass out the array that will be used as the Idle task's stack. */
+    *ppxIdleTaskStackBuffer = uxIdleTaskStack;
+
+    /* Pass out the size of the array pointed to by *ppxIdleTaskStackBuffer.
+    Note that, as the array is necessarily of type StackType_t,
+    configMINIMAL_STACK_SIZE is specified in words, not bytes. */
+    *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+}
+
+/* configUSE_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
+ * application must provide an implementation of vApplicationGetTimerTaskMemory()
+ * to provide the memory that is used by the Timer service task. */
+void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
+                                     StackType_t ** ppxTimerTaskStackBuffer,
+                                     uint32_t * pulTimerTaskStackSize )
+{
+static StaticTask_t xTimerTaskTCB;
+static StackType_t uxTimerTaskStack[ configMINIMAL_STACK_SIZE ];
+
+	/* Pass out a pointer to the StaticTask_t structure in which the Idle task's
+	state will be stored. */
+	*ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
+
+	/* Pass out the array that will be used as the Idle task's stack. */
+	*ppxTimerTaskStackBuffer = uxTimerTaskStack;
+
+	/* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
+	Note that, as the array is necessarily of type StackType_t,
+	configMINIMAL_STACK_SIZE is specified in words, not bytes. */
+	*pulTimerTaskStackSize = configMINIMAL_STACK_SIZE;
+}
+
 /*-----------------------------------------------------------*/
 #if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
 static void prvCheckTimerCallback( TimerHandle_t xTimer )

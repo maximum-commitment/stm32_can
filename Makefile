@@ -197,6 +197,30 @@ Drivers/BSP/Components/lis3dsh/lis3dsh.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/Components/lis3dsh/lis3dsh.c.s
 .PHONY : Drivers/BSP/Components/lis3dsh/lis3dsh.c.s
 
+Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.o: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o
+.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.o
+
+# target to build an object file
+Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o
+.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.o
+
+Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.i: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i
+.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.i
+
+# target to preprocess a source file
+Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i
+.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.i
+
+Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.s: Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s
+.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.s
+
+# target to generate assembly for a file
+Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s
+.PHONY : Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c.s
+
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o: Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c.o
 .PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
 
@@ -1261,30 +1285,6 @@ Src/stm32f4xx_hal_msp.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_hal_msp.c.s
 .PHONY : Src/stm32f4xx_hal_msp.c.s
 
-Src/stm32f4xx_it.o: Src/stm32f4xx_it.c.o
-.PHONY : Src/stm32f4xx_it.o
-
-# target to build an object file
-Src/stm32f4xx_it.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.o
-.PHONY : Src/stm32f4xx_it.c.o
-
-Src/stm32f4xx_it.i: Src/stm32f4xx_it.c.i
-.PHONY : Src/stm32f4xx_it.i
-
-# target to preprocess a source file
-Src/stm32f4xx_it.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.i
-.PHONY : Src/stm32f4xx_it.c.i
-
-Src/stm32f4xx_it.s: Src/stm32f4xx_it.c.s
-.PHONY : Src/stm32f4xx_it.s
-
-# target to generate assembly for a file
-Src/stm32f4xx_it.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/stm32f4xx_it.c.s
-.PHONY : Src/stm32f4xx_it.c.s
-
 Src/syscalls.o: Src/syscalls.c.o
 .PHONY : Src/syscalls.o
 
@@ -1542,6 +1542,9 @@ help:
 	@echo "... Drivers/BSP/Components/lis3dsh/lis3dsh.o"
 	@echo "... Drivers/BSP/Components/lis3dsh/lis3dsh.i"
 	@echo "... Drivers/BSP/Components/lis3dsh/lis3dsh.s"
+	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.o"
+	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.i"
+	@echo "... Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.s"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.i"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.s"
@@ -1675,9 +1678,6 @@ help:
 	@echo "... Src/stm32f4xx_hal_msp.o"
 	@echo "... Src/stm32f4xx_hal_msp.i"
 	@echo "... Src/stm32f4xx_hal_msp.s"
-	@echo "... Src/stm32f4xx_it.o"
-	@echo "... Src/stm32f4xx_it.i"
-	@echo "... Src/stm32f4xx_it.s"
 	@echo "... Src/syscalls.o"
 	@echo "... Src/syscalls.i"
 	@echo "... Src/syscalls.s"
