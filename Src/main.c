@@ -181,7 +181,7 @@ void CAN_Send_DemoMessage()
 
   #define CAN_TXDATA_BUFFER_SIZE 32
   uint8_t TxData[CAN_TXDATA_BUFFER_SIZE];
-  memset(TxData, ~togglecounter, CAN_TXDATA_BUFFER_SIZE);
+  memset(TxData, (~togglecounter)&0x5555, CAN_TXDATA_BUFFER_SIZE);
   uint32_t TxMailbox = 0;
 
   HAL_StatusTypeDef can_status = HAL_CAN_AddTxMessage( &hcan1, 
@@ -254,9 +254,6 @@ int main(void)
                                        This parameter must be a number between Min_Data = 0 and Max_Data = 27. */
 
 };
-  /* SysTick end of count event each 10ms */
-  SystemCoreClock = HAL_RCC_GetHCLKFreq();
-  SysTick_Config(SystemCoreClock / 100);
 
   /* Configure LED3, LED4, LED5 and LED6 */
   BSP_LED_Init(LED3);
@@ -266,6 +263,9 @@ int main(void)
 
   /* Configure the system clock to 168 MHz */
   SystemClock_Config();
+  /* SysTick end of count event each 10ms */
+  SystemCoreClock = HAL_RCC_GetHCLKFreq();
+  SysTick_Config(SystemCoreClock / 100);
   HAL_CAN_Init(&hcan1);
   HAL_CAN_Start(&hcan1);
   HAL_CAN_ConfigFilter(&hcan1, &myFlt);
