@@ -174,74 +174,7 @@
  */
 static void prvSetupHardware( void );
 
-#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-/*
- * The check timer callback function, as described at the top of this file.
- */
-static void prvCheckTimerCallback( TimerHandle_t xTimer );
-
-/*
- * Configure the interrupts used to test the interrupt nesting depth as
- * described at the top of this file.
- */
-static void prvSetupNestedFPUInterruptsTest( void );
-#endif
-
-/*
- * Register check tasks, and the tasks used to write over and check the contents
- * of the FPU registers, as described at the top of this file.  The nature of
- * these files necessitates that they are written in an assembly file.
- */
-#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-extern void vRegTest1Task( void * pvParameters );
-extern void vRegTest2Task( void * pvParameters );
-extern void vRegTestClearFlopRegistersToParameterValue( unsigned long ulValue );
-extern unsigned long ulRegTestCheckFlopRegistersContainParameterValue( unsigned long ulValue );
-#endif
-
-#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-/*
- * The task that is synchronised with the button interrupt.  This is done just
- * to demonstrate how to write interrupt service routines, and how to
- * synchronise a task with an interrupt.
- */
-static void prvButtonTestTask( void * pvParameters );
-#endif
-/*
- * This file can be used to create either a simple LED flasher example, or a
- * comprehensive test/demo application - depending on the setting of the
- * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY constant defined above.  If
- * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to 1, then the following
- * function will create a lot of additional tasks and a software timer.  If
- * mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY is set to 0, then the following
- * function will do nothing.
- */
-static void prvOptionallyCreateComprehensveTestApplication( void );
-
-/*-----------------------------------------------------------*/
-
-/* The following two variables are used to communicate the status of the
- * register check tasks to the check software timer.  If the variables keep
- * incrementing, then the register check tasks have not discovered any errors.  If
- * a variable stops incrementing, then an error has been found. */
-volatile unsigned long ulRegTest1LoopCounter = 0UL, ulRegTest2LoopCounter = 0UL;
-
-/* The following variables are used to verify that the interrupt nesting depth
- * is as intended.  ulFPUInterruptNesting is incremented on entry to an interrupt
- * that uses the FPU, and decremented on exit of the same interrupt.
- * ulMaxFPUInterruptNesting latches the highest value reached by
- * ulFPUInterruptNesting.  These variables have no other purpose. */
-volatile unsigned long ulFPUInterruptNesting = 0UL, ulMaxFPUInterruptNesting = 0UL;
-
-/* The semaphore used to demonstrate a task being synchronised with an
- * interrupt. */
-static SemaphoreHandle_t xTestSemaphore = NULL;
-
-/* The variable that is incremented by the task synchronised with the button
- * interrupt. */
-volatile unsigned long ulButtonPressCounts = 0UL;
-
-static void vLEDFlashTask( void * pvParameters )
+void Task_LEDFlash_Callback()
 {
     /* Queue a message for printing to say the task has started. */
     //vPrintDisplayMessage( &pcTaskStartMsg );
@@ -258,12 +191,26 @@ static void vLEDFlashTask( void * pvParameters )
     }
 }
 
-static vStartLEDFlashTasks()
+void Task_LEDFlash_StartTask()
 {
-    static StaticTask_t xLEDTaskTCB;
     static StackType_t uxLEDTaskStack[ configMINIMAL_STACK_SIZE ];
+    static StaticTask_t xLEDTaskTCB;
 
-    xTaskCreateStatic( vLEDFlashTask, "LEDx", configMINIMAL_STACK_SIZE, NULL, 4, &uxLEDTaskStack, &xLEDTaskTCB );
+    xTaskCreateStatic( Task_LEDFlash_Callback,
+    		           "LED flash task",
+					   configMINIMAL_STACK_SIZE,
+					   NULL,
+					   4,
+					   (StackType_t * ) &uxLEDTaskStack,
+					   (StaticTask_t *) &xLEDTaskTCB );
+}
+
+void Task_LEDFlash_SetupHw()
+{
+    BSP_LED_Init(LED3);
+    BSP_LED_Init(LED4);
+    BSP_LED_Init(LED5);
+    BSP_LED_Init(LED6);
 }
 
 int main( void )
@@ -271,16 +218,12 @@ int main( void )
     /* Configure the hardware ready to run the test. */
     prvSetupHardware();
 
-    BSP_LED_Init(LED3);
-    BSP_LED_Init(LED4);
-    BSP_LED_Init(LED5);
-    BSP_LED_Init(LED6);
     BSP_LED_On(LED4);
     BSP_LED_On(LED3);
     BSP_LED_On(LED5);
     BSP_LED_On(LED6);
 
-    vStartLEDFlashTasks();
+    Task_LEDFlash_StartTask();
 
 #ifdef COMPILEOUT_INITIAL_TEST_APP
     /* The following function will only create more tasks and timers if
@@ -292,7 +235,7 @@ int main( void )
 
 #endif
 
-    vTaskStartScheduler();
+	vTaskStartScheduler();
 
     /* If all is well, the scheduler will now be running, and the following line
      * will never be reached.  If the following line does execute, then there was
@@ -352,131 +295,6 @@ static StackType_t uxTimerTaskStack[ configMINIMAL_STACK_SIZE ];
 	*pulTimerTaskStackSize = configMINIMAL_STACK_SIZE;
 }
 
-/*-----------------------------------------------------------*/
-#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-static void prvCheckTimerCallback( TimerHandle_t xTimer )
-{
-    static long lChangedTimerPeriodAlready = pdFALSE;
-    static unsigned long ulLastRegTest1Value = 0, ulLastRegTest2Value = 0;
-    long lErrorFound = pdFALSE;
-
-    /* Check all the demo tasks (other than the flash tasks) to ensure
-     * that they are all still running, and that none have detected an error. */
-#ifdef FREERTOS_TESTCODE
-    if( xAreMathsTaskStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreIntegerMathsTaskStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreDynamicPriorityTasksStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreBlockingQueuesStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreBlockTimeTestTasksStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreGenericQueueTasksStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreRecursiveMutexTasksStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xIsCreateTaskStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xArePollingQueuesStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    if( xAreSemaphoreTasksStillRunning() != pdTRUE )
-    {
-        lErrorFound = pdTRUE;
-    }
-#endif
-
-    /* Check that the register test 1 task is still running. */
-    if( ulLastRegTest1Value == ulRegTest1LoopCounter )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    ulLastRegTest1Value = ulRegTest1LoopCounter;
-
-    /* Check that the register test 2 task is still running. */
-    if( ulLastRegTest2Value == ulRegTest2LoopCounter )
-    {
-        lErrorFound = pdTRUE;
-    }
-
-    ulLastRegTest2Value = ulRegTest2LoopCounter;
-
-#ifdef FREERTOS_TESTCODE
-    /* Toggle the check LED to give an indication of the system status.  If
-     * the LED toggles every mainCHECK_TIMER_PERIOD_MS milliseconds then
-     * everything is ok.  A faster toggle indicates an error. */
-    vParTestToggleLED( mainCHECK_LED );
-#endif
-
-    /* Have any errors been latch in lErrorFound?  If so, shorten the
-     * period of the check timer to mainERROR_CHECK_TIMER_PERIOD_MS milliseconds.
-     * This will result in an increase in the rate at which mainCHECK_LED
-     * toggles. */
-    if( lErrorFound != pdFALSE )
-    {
-        if( lChangedTimerPeriodAlready == pdFALSE )
-        {
-            lChangedTimerPeriodAlready = pdTRUE;
-
-            /* This call to xTimerChangePeriod() uses a zero block time.
-             * Functions called from inside of a timer callback function must
-             * never* attempt	to block. */
-            xTimerChangePeriod( xTimer, ( mainERROR_CHECK_TIMER_PERIOD_MS ), mainDONT_BLOCK );
-        }
-    }
-}
-/*-----------------------------------------------------------*/
-
-static void prvButtonTestTask( void * pvParameters )
-{
-    configASSERT( xTestSemaphore );
-
-    /* This is the task used as an example of how to synchronise a task with
-     * an interrupt.  Each time the button interrupt gives the semaphore, this task
-     * will unblock, increment its execution counter, then return to block
-     * again. */
-
-    /* Take the semaphore before started to ensure it is in the correct
-     * state. */
-    xSemaphoreTake( xTestSemaphore, mainDONT_BLOCK );
-
-    for( ; ; )
-    {
-        xSemaphoreTake( xTestSemaphore, portMAX_DELAY );
-        ulButtonPressCounts++;
-    }
-}
-/*-----------------------------------------------------------*/
-#endif
 static void prvSetupHardware( void )
 {
     /* Setup STM32 system (clock, PLL and Flash configuration) */
@@ -485,191 +303,13 @@ static void prvSetupHardware( void )
     /* Ensure all priority bits are assigned as preemption priority bits. */
     HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4 );
 
-#ifdef FREERTOS_TESTCODE
-    /* Setup the LED outputs. */
-    vParTestInitialise();
-#endif
-
-#ifdef STMEVAL_BRD_TESTCODE
-    /* Configure the button input.  This configures the interrupt to use the
-     * lowest interrupt priority, so it is ok to use the ISR safe FreeRTOS API
-     * from the button interrupt handler. */
-    STM_EVAL_PBInit( BUTTON_USER, BUTTON_MODE_EXTI );
-#endif
+    Task_LEDFlash_SetupHw();
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationTickHook( void )
 {
-    #if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-    {
-        /* Just to verify that the interrupt nesting behaves as expected,
-         * increment ulFPUInterruptNesting on entry, and decrement it on exit. */
-        ulFPUInterruptNesting++;
-
-        /* Fill the FPU registers with 0. */
-        vRegTestClearFlopRegistersToParameterValue( 0UL );
-
-        /* Trigger a timer 2 interrupt, which will fill the registers with a
-         * different value and itself trigger a timer 3 interrupt.  Note that the
-         * timers are not actually used.  The timer 2 and 3 interrupt vectors are
-         * just used for convenience. */
-        NVIC_SetPendingIRQ( TIM2_IRQn );
-
-        /* Ensure that, after returning from the nested interrupts, all the FPU
-         * registers contain the value to which they were set by the tick hook
-         * function. */
-        configASSERT( ulRegTestCheckFlopRegistersContainParameterValue( 0UL ) );
-
-        ulFPUInterruptNesting--;
-    }
-    #endif /* if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 ) */
 }
-/*-----------------------------------------------------------*/
-#if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-static void prvSetupNestedFPUInterruptsTest( void )
-{
-    NVIC_InitTypeDef NVIC_InitStructure;
-
-    /* Enable the TIM2 interrupt in the NVIC.  The timer itself is not used,
-     * just its interrupt vector to force nesting from software.  TIM2 must have
-     * a lower priority than TIM3, and both must have priorities above
-     * configMAX_SYSCALL_INTERRUPT_PRIORITY. */
-    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY - 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init( &NVIC_InitStructure );
-
-    /* Enable the TIM3 interrupt in the NVIC.  The timer itself is not used,
-     * just its interrupt vector to force nesting from software.  TIM2 must have
-     * a lower priority than TIM3, and both must have priorities above
-     * configMAX_SYSCALL_INTERRUPT_PRIORITY. */
-    NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY - 2;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init( &NVIC_InitStructure );
-}
-#endif
-/*-----------------------------------------------------------*/
-
-void TIM3_IRQHandler( void )
-{
-    /* Just to verify that the interrupt nesting behaves as expected, increment
-     * ulFPUInterruptNesting on entry, and decrement it on exit. */
-    ulFPUInterruptNesting++;
-
-    /* This is the highest priority interrupt in the chain of forced nesting
-     * interrupts, so latch the maximum value reached by ulFPUInterruptNesting.
-     * This is done purely to allow verification that the nesting depth reaches
-     * that intended. */
-    if( ulFPUInterruptNesting > ulMaxFPUInterruptNesting )
-    {
-        ulMaxFPUInterruptNesting = ulFPUInterruptNesting;
-    }
-#ifdef COMPILEOUT_INITIAL_TEST_APP
-    /* Fill the FPU registers with 99 to overwrite the values written by
-     * TIM2_IRQHandler(). */
-    vRegTestClearFlopRegistersToParameterValue( 99UL );
-#endif
-    ulFPUInterruptNesting--;
-}
-/*-----------------------------------------------------------*/
-
-void TIM2_IRQHandler( void )
-{
-    /* Just to verify that the interrupt nesting behaves as expected, increment
-     * ulFPUInterruptNesting on entry, and decrement it on exit. */
-    ulFPUInterruptNesting++;
-
-#ifdef COMPILEOUT_INITIAL_TEST_APP
-    /* Fill the FPU registers with 1. */
-    vRegTestClearFlopRegistersToParameterValue( 1UL );
-#endif
-    /* Trigger a timer 3 interrupt, which will fill the registers with a
-     * different value. */
-    NVIC_SetPendingIRQ( TIM3_IRQn );
-
-#ifdef COMPILEOUT_INITIAL_TEST_APP
-    /* Ensure that, after returning from the nesting interrupt, all the FPU
-     * registers contain the value to which they were set by this interrupt
-     * function. */
-    configASSERT( ulRegTestCheckFlopRegistersContainParameterValue( 1UL ) );
-#endif
-
-    ulFPUInterruptNesting--;
-}
-/*-----------------------------------------------------------*/
-
-static void prvOptionallyCreateComprehensveTestApplication( void )
-{
-    #if ( mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY == 0 )
-    {
-        TimerHandle_t xCheckTimer = NULL;
-
-        /* Configure the interrupts used to test FPU registers being used from
-         * nested interrupts. */
-        prvSetupNestedFPUInterruptsTest();
-#ifdef FREERTOS_TESTCODE
-        /* Start all the other standard demo/test tasks. */
-        vStartIntegerMathTasks( tskIDLE_PRIORITY );
-        vStartDynamicPriorityTasks();
-        vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );
-        vCreateBlockTimeTasks();
-        vStartCountingSemaphoreTasks();
-        vStartGenericQueueTasks( tskIDLE_PRIORITY );
-        vStartRecursiveMutexTasks();
-        vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
-        vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
-#endif
-#ifdef FREERTOS_TESTCODE
-        /* Most importantly, start the tasks that use the FPU. */
-        vStartMathTasks( mainFLOP_TASK_PRIORITY );
-#endif
-        /* Create the register check tasks, as described at the top of this
-         * file */
-        xTaskCreate( vRegTest1Task, "Reg1", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
-        xTaskCreate( vRegTest2Task, "Reg2", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
-
-        /* Create the semaphore that is used to demonstrate a task being
-         * synchronised with an interrupt. */
-        vSemaphoreCreateBinary( xTestSemaphore );
-
-        /* Create the task that is unblocked by the demonstration interrupt. */
-        xTaskCreate( prvButtonTestTask, "BtnTest", configMINIMAL_STACK_SIZE, ( void * ) NULL, tskIDLE_PRIORITY, NULL );
-
-        /* Create the software timer that performs the 'check' functionality,
-         * as described at the top of this file. */
-        xCheckTimer = xTimerCreate( "CheckTimer",                  /* A text name, purely to help debugging. */
-                                    ( mainCHECK_TIMER_PERIOD_MS ), /* The timer period, in this case 3000ms (3s). */
-                                    pdTRUE,                        /* This is an auto-reload timer, so xAutoReload is set to pdTRUE. */
-                                    ( void * ) 0,                  /* The ID is not used, so can be set to anything. */
-                                    prvCheckTimerCallback          /* The callback function that inspects the status of all the other tasks. */
-                                    );
-
-        if( xCheckTimer != NULL )
-        {
-            xTimerStart( xCheckTimer, mainDONT_BLOCK );
-        }
-#ifdef FREERTOS_TESTCODE
-        /* This task has to be created last as it keeps account of the number of
-         * tasks it expects to see running. */
-        vCreateSuicidalTasks( mainCREATOR_TASK_PRIORITY );
-#endif
-    }
-    //#else /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
-    {
-        /* Just to prevent compiler warnings when the configuration options are
-         * set such that these static functions are not used. */
-        ( void ) vRegTest1Task;
-        ( void ) vRegTest2Task;
-        ( void ) prvCheckTimerCallback;
-        ( void ) prvSetupNestedFPUInterruptsTest;
-    }
-    #endif /* mainCREATE_SIMPLE_LED_FLASHER_DEMO_ONLY */
-}
-/*-----------------------------------------------------------*/
 
 void EXTI9_5_IRQHandler( void )
 {
@@ -698,27 +338,6 @@ void EXTI9_5_IRQHandler( void )
      * return directly to the unblocked, higher priority, task. */
     portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
 }
-/*-----------------------------------------------------------*/
-
-void vApplicationMallocFailedHook( void )
-{
-    /* vApplicationMallocFailedHook() will only be called if
-     * configUSE_MALLOC_FAILED_HOOK is set to 1 in FreeRTOSConfig.h.  It is a hook
-     * function that will get called if a call to pvPortMalloc() fails.
-     * pvPortMalloc() is called internally by the kernel whenever a task, queue,
-     * timer or semaphore is created.  It is also called by various parts of the
-     * demo application.  If heap_1.c or heap_2.c are used, then the size of the
-     * heap available to pvPortMalloc() is defined by configTOTAL_HEAP_SIZE in
-     * FreeRTOSConfig.h, and the xPortGetFreeHeapSize() API function can be used
-     * to query the size of free heap space that remains (although it does not
-     * provide information on how the remaining heap might be fragmented). */
-    taskDISABLE_INTERRUPTS();
-
-    for( ; ; )
-    {
-    }
-}
-/*-----------------------------------------------------------*/
 
 void vApplicationIdleHook( void )
 {
