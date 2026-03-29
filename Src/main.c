@@ -204,31 +204,32 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
+
 const CAN_FilterTypeDef myFlt =
 {
-  .FilterIdHigh = 0xFFFF,          /*!< Specifies the filter identification number (MSBs for a 32-bit
+  .FilterIdHigh = 0x0000,          /*!< Specifies the filter identification number (MSBs for a 32-bit
                                        configuration, first one for a 16-bit configuration).
                                        This parameter must be a number between
                                        Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
-  .FilterIdLow = 0xFFFF,           /*!< Specifies the filter identification number (LSBs for a 32-bit
+  .FilterIdLow = 0x0000,           /*!< Specifies the filter identification number (LSBs for a 32-bit
                                        configuration, second one for a 16-bit configuration).
                                        This parameter must be a number between
                                        Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
-  .FilterMaskIdHigh = 0xFFFF,      /*!< Specifies the filter mask number or identification number,
+  .FilterMaskIdHigh = 0x0000,      /*!< Specifies the filter mask number or identification number,
                                        according to the mode (MSBs for a 32-bit configuration,
                                        first one for a 16-bit configuration).
                                        This parameter must be a number between
                                        Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
-  .FilterMaskIdLow = 0xFFFF,       /*!< Specifies the filter mask number or identification number,
+  .FilterMaskIdLow = 0x0000,       /*!< Specifies the filter mask number or identification number,
                                        according to the mode (LSBs for a 32-bit configuration,
                                        second one for a 16-bit configuration).
                                        This parameter must be a number between
                                        Min_Data = 0x0000 and Max_Data = 0xFFFF. */
 
-  .FilterFIFOAssignment = 0,  /*!< Specifies the FIFO (0 or 1U) which will be assigned to the filter.
+  .FilterFIFOAssignment = CAN_RX_FIFO0,  /*!< Specifies the FIFO (0 or 1U) which will be assigned to the filter.
                                        This parameter can be a value of @ref CAN_filter_FIFO */
 
   .FilterBank = 0,            /*!< Specifies the filter bank which will be initialized.
@@ -237,13 +238,13 @@ const CAN_FilterTypeDef myFlt =
                                        For dual CAN instances(28 filter banks shared),
                                        this parameter must be a number between Min_Data = 0 and Max_Data = 27. */
 
-  .FilterMode = 0,            /*!< Specifies the filter mode to be initialized.
+  .FilterMode = CAN_FILTERMODE_IDMASK,            /*!< Specifies the filter mode to be initialized.
                                        This parameter can be a value of @ref CAN_filter_mode */
 
-  .FilterScale = 0,          /*!< Specifies the filter scale.
+  .FilterScale = CAN_FILTERSCALE_32BIT,          /*!< Specifies the filter scale.
                                        This parameter can be a value of @ref CAN_filter_scale */
 
-  .FilterActivation = 1,     /*!< Enable or disable the filter.
+  .FilterActivation = ENABLE,     /*!< Enable or disable the filter.
                                        This parameter can be a value of @ref CAN_filter_activation */
 
   .SlaveStartFilterBank = 0  /*!< Select the start filter bank for the slave CAN instance.
@@ -264,8 +265,8 @@ const CAN_FilterTypeDef myFlt =
   while (1)
   {
     /* USER CODE END WHILE */
-    if(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)!=0)
-    { CAN_Send_DemoMessage(); }
+    /*if(HAL_CAN_GetTxMai lboxesFreeLevel(&hcan1)!=0)
+    { CAN_Send_DemoMessage(); }*/
     HAL_Delay(50);
 
     
