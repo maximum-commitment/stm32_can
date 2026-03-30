@@ -31,44 +31,10 @@ set(HAL_DRIVER_SOURCE
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_adc.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_can.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_cortex.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_crc.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_cryp.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_dac.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_dcmi.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_dma.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_eth.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_flash.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_flash_ex.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_gpio.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_hash.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_hcd.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_i2c.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_i2s.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_irda.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_iwdg.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_nand.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_nor.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_pccard.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_pcd.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_pcd_ex.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_pwr.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_rcc.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_rng.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_rtc.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_sd.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_smartcard.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_spi.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_sram.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_tim.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_tim_ex.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_uart.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_usart.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_wwdg.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_fsmc.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_sdmmc.c"
-"${HAL_DRIVER_PATH}/Src/stm32f4xx_ll_usb.c"
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_exti.c"
-"Drivers/BSP/STM32F4-Discovery/stm32f4_discovery.c"
 )
 
 set(C_FLAGS
@@ -110,10 +76,7 @@ set(ASM_FLAGS
 set(FREERTOS_KERNEL_PATH "../FreeRTOS/FreeRTOS")
 set(FREERTOS_KERNEL_SOURCE_PATH "${FREERTOS_KERNEL_PATH}/Source")
 
-#set(stm32_elf_EXTERNAL_OBJECTS libfreertos_kernel.a)
-#set_target_properties(stm32.elf PROPERTIES EXTERNAL_OBJECTS "libfreertos_kernel.a")
-
-set(ASM_SOURCE "STM32CubeIDE/Application/Startup/startup_stm32f407vgtx.s")
+set(ASM_SOURCE "Startup/startup_stm32f407vgtx.s")
 
 add_library(freertos_kernel STATIC)
 
@@ -157,10 +120,6 @@ ${HAL_DRIVER_SOURCE}
 ${BSP_DRIVER_SOURCE}
 )
 
-set_target_properties(${STM32_ELF_FILE} PROPERTIES
-    LINK_FLAGS "libfreertos_kernel.a"
-)
-
 target_include_directories(${STM32_ELF_FILE} PRIVATE
 "Inc"
 "Drivers/CMSIS/Device/ST/STM32F4xx/Include"
@@ -174,7 +133,7 @@ CORTEX_M4F_STM32F407ZG-SK/board
 CORTEX_M4F_STM32F407ZG-SK
 )
 
-set(CMAKE_EXE_LINKER_FLAGS "-mcpu=cortex-m4 -Wl,-T STM32CubeIDE/STM32F407VGTX_FLASH.ld --specs=nosys.specs -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,-L. -Wl,--end-group"
+set(CMAKE_EXE_LINKER_FLAGS "-mcpu=cortex-m4 -Wl,-T STM32F407VGTX_FLASH.ld --specs=nosys.specs -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,-L. -Wl,--end-group"
 CACHE INTERNAL "linker options"
 )
 
