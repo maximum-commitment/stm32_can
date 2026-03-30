@@ -24,8 +24,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f4_discovery.h"
-#include "stm32f4_discovery_accelerometer.h"
 #include "stm32f4xx_hal_can.h"
 
 /* USER CODE END Includes */

@@ -37,6 +37,8 @@ set(HAL_DRIVER_SOURCE
 "${HAL_DRIVER_PATH}/Src/stm32f4xx_hal_exti.c"
 )
 
+set(ASM_SOURCE "Startup/startup_stm32f407vgtx.s")
+
 set(C_FLAGS
 "-mcpu=cortex-m4"
 "-std=gnu11"
@@ -73,10 +75,7 @@ set(ASM_FLAGS
 "-mthumb"
 )
 
-set(FREERTOS_KERNEL_PATH "../FreeRTOS/FreeRTOS")
-set(FREERTOS_KERNEL_SOURCE_PATH "${FREERTOS_KERNEL_PATH}/Source")
-
-set(ASM_SOURCE "Startup/startup_stm32f407vgtx.s")
+set(FREERTOS_KERNEL_SOURCE_PATH FreeRTOS)
 
 add_library(freertos_kernel STATIC)
 
@@ -92,11 +91,7 @@ target_sources(freertos_kernel PRIVATE
 
 target_include_directories(freertos_kernel PRIVATE
 "Inc"
-"Drivers/CMSIS/Device/ST/STM32F4xx/Include"
-"${HAL_DRIVER_PATH}/Inc"
-"Drivers/CMSIS/Include"
 ${FREERTOS_KERNEL_SOURCE_PATH}/include
-${FREERTOS_KERNEL_SOURCE_PATH}/portable/GCC/ARM_CM4F
 )
 
 target_compile_options(freertos_kernel PRIVATE
@@ -124,13 +119,9 @@ target_include_directories(${STM32_ELF_FILE} PRIVATE
 "Inc"
 "Drivers/CMSIS/Device/ST/STM32F4xx/Include"
 "${HAL_DRIVER_PATH}/Inc"
-"${BSP_DRIVER_PATH}/STM32F4-Discovery"
 "Drivers/CMSIS/Include"
 ${FREERTOS_KERNEL_SOURCE_PATH}/include
-${FREERTOS_KERNEL_SOURCE_PATH}/portable/GCC/ARM_CM4F
 Common/include
-CORTEX_M4F_STM32F407ZG-SK/board
-CORTEX_M4F_STM32F407ZG-SK
 )
 
 set(CMAKE_EXE_LINKER_FLAGS "-mcpu=cortex-m4 -Wl,-T STM32F407VGTX_FLASH.ld --specs=nosys.specs -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,-L. -Wl,--end-group"

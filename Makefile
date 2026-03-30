@@ -389,6 +389,174 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c.s
 .PHONY : Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c.s
 
+FreeRTOS/croutine.o: FreeRTOS/croutine.c.o
+.PHONY : FreeRTOS/croutine.o
+
+# target to build an object file
+FreeRTOS/croutine.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/croutine.c.o
+.PHONY : FreeRTOS/croutine.c.o
+
+FreeRTOS/croutine.i: FreeRTOS/croutine.c.i
+.PHONY : FreeRTOS/croutine.i
+
+# target to preprocess a source file
+FreeRTOS/croutine.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/croutine.c.i
+.PHONY : FreeRTOS/croutine.c.i
+
+FreeRTOS/croutine.s: FreeRTOS/croutine.c.s
+.PHONY : FreeRTOS/croutine.s
+
+# target to generate assembly for a file
+FreeRTOS/croutine.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/croutine.c.s
+.PHONY : FreeRTOS/croutine.c.s
+
+FreeRTOS/event_groups.o: FreeRTOS/event_groups.c.o
+.PHONY : FreeRTOS/event_groups.o
+
+# target to build an object file
+FreeRTOS/event_groups.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/event_groups.c.o
+.PHONY : FreeRTOS/event_groups.c.o
+
+FreeRTOS/event_groups.i: FreeRTOS/event_groups.c.i
+.PHONY : FreeRTOS/event_groups.i
+
+# target to preprocess a source file
+FreeRTOS/event_groups.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/event_groups.c.i
+.PHONY : FreeRTOS/event_groups.c.i
+
+FreeRTOS/event_groups.s: FreeRTOS/event_groups.c.s
+.PHONY : FreeRTOS/event_groups.s
+
+# target to generate assembly for a file
+FreeRTOS/event_groups.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/event_groups.c.s
+.PHONY : FreeRTOS/event_groups.c.s
+
+FreeRTOS/list.o: FreeRTOS/list.c.o
+.PHONY : FreeRTOS/list.o
+
+# target to build an object file
+FreeRTOS/list.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/list.c.o
+.PHONY : FreeRTOS/list.c.o
+
+FreeRTOS/list.i: FreeRTOS/list.c.i
+.PHONY : FreeRTOS/list.i
+
+# target to preprocess a source file
+FreeRTOS/list.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/list.c.i
+.PHONY : FreeRTOS/list.c.i
+
+FreeRTOS/list.s: FreeRTOS/list.c.s
+.PHONY : FreeRTOS/list.s
+
+# target to generate assembly for a file
+FreeRTOS/list.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/list.c.s
+.PHONY : FreeRTOS/list.c.s
+
+FreeRTOS/queue.o: FreeRTOS/queue.c.o
+.PHONY : FreeRTOS/queue.o
+
+# target to build an object file
+FreeRTOS/queue.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/queue.c.o
+.PHONY : FreeRTOS/queue.c.o
+
+FreeRTOS/queue.i: FreeRTOS/queue.c.i
+.PHONY : FreeRTOS/queue.i
+
+# target to preprocess a source file
+FreeRTOS/queue.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/queue.c.i
+.PHONY : FreeRTOS/queue.c.i
+
+FreeRTOS/queue.s: FreeRTOS/queue.c.s
+.PHONY : FreeRTOS/queue.s
+
+# target to generate assembly for a file
+FreeRTOS/queue.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/queue.c.s
+.PHONY : FreeRTOS/queue.c.s
+
+FreeRTOS/stream_buffer.o: FreeRTOS/stream_buffer.c.o
+.PHONY : FreeRTOS/stream_buffer.o
+
+# target to build an object file
+FreeRTOS/stream_buffer.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/stream_buffer.c.o
+.PHONY : FreeRTOS/stream_buffer.c.o
+
+FreeRTOS/stream_buffer.i: FreeRTOS/stream_buffer.c.i
+.PHONY : FreeRTOS/stream_buffer.i
+
+# target to preprocess a source file
+FreeRTOS/stream_buffer.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/stream_buffer.c.i
+.PHONY : FreeRTOS/stream_buffer.c.i
+
+FreeRTOS/stream_buffer.s: FreeRTOS/stream_buffer.c.s
+.PHONY : FreeRTOS/stream_buffer.s
+
+# target to generate assembly for a file
+FreeRTOS/stream_buffer.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/stream_buffer.c.s
+.PHONY : FreeRTOS/stream_buffer.c.s
+
+FreeRTOS/tasks.o: FreeRTOS/tasks.c.o
+.PHONY : FreeRTOS/tasks.o
+
+# target to build an object file
+FreeRTOS/tasks.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/tasks.c.o
+.PHONY : FreeRTOS/tasks.c.o
+
+FreeRTOS/tasks.i: FreeRTOS/tasks.c.i
+.PHONY : FreeRTOS/tasks.i
+
+# target to preprocess a source file
+FreeRTOS/tasks.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/tasks.c.i
+.PHONY : FreeRTOS/tasks.c.i
+
+FreeRTOS/tasks.s: FreeRTOS/tasks.c.s
+.PHONY : FreeRTOS/tasks.s
+
+# target to generate assembly for a file
+FreeRTOS/tasks.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/tasks.c.s
+.PHONY : FreeRTOS/tasks.c.s
+
+FreeRTOS/timers.o: FreeRTOS/timers.c.o
+.PHONY : FreeRTOS/timers.o
+
+# target to build an object file
+FreeRTOS/timers.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/timers.c.o
+.PHONY : FreeRTOS/timers.c.o
+
+FreeRTOS/timers.i: FreeRTOS/timers.c.i
+.PHONY : FreeRTOS/timers.i
+
+# target to preprocess a source file
+FreeRTOS/timers.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/timers.c.i
+.PHONY : FreeRTOS/timers.c.i
+
+FreeRTOS/timers.s: FreeRTOS/timers.c.s
+.PHONY : FreeRTOS/timers.s
+
+# target to generate assembly for a file
+FreeRTOS/timers.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/timers.c.s
+.PHONY : FreeRTOS/timers.c.s
+
 Src/main.o: Src/main.c.o
 .PHONY : Src/main.o
 
@@ -541,174 +709,6 @@ Startup/startup_stm32f407vgtx.s.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Startup/startup_stm32f407vgtx.s.o
 .PHONY : Startup/startup_stm32f407vgtx.s.o
 
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.c.s
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.c.s
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.c.s
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.c.s
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.c.s
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.c.s
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.o: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.o
-
-# target to build an object file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.o
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.o
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.i: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.i
-
-# target to preprocess a source file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.i
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.i
-
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.s: Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.s
-
-# target to generate assembly for a file
-Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.s
-.PHONY : Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.c.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -750,6 +750,27 @@ help:
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.i"
 	@echo "... Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.s"
+	@echo "... FreeRTOS/croutine.o"
+	@echo "... FreeRTOS/croutine.i"
+	@echo "... FreeRTOS/croutine.s"
+	@echo "... FreeRTOS/event_groups.o"
+	@echo "... FreeRTOS/event_groups.i"
+	@echo "... FreeRTOS/event_groups.s"
+	@echo "... FreeRTOS/list.o"
+	@echo "... FreeRTOS/list.i"
+	@echo "... FreeRTOS/list.s"
+	@echo "... FreeRTOS/queue.o"
+	@echo "... FreeRTOS/queue.i"
+	@echo "... FreeRTOS/queue.s"
+	@echo "... FreeRTOS/stream_buffer.o"
+	@echo "... FreeRTOS/stream_buffer.i"
+	@echo "... FreeRTOS/stream_buffer.s"
+	@echo "... FreeRTOS/tasks.o"
+	@echo "... FreeRTOS/tasks.i"
+	@echo "... FreeRTOS/tasks.s"
+	@echo "... FreeRTOS/timers.o"
+	@echo "... FreeRTOS/timers.i"
+	@echo "... FreeRTOS/timers.s"
 	@echo "... Src/main.o"
 	@echo "... Src/main.i"
 	@echo "... Src/main.s"
@@ -769,27 +790,6 @@ help:
 	@echo "... Src/system_stm32f4xx.i"
 	@echo "... Src/system_stm32f4xx.s"
 	@echo "... Startup/startup_stm32f407vgtx.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/croutine.s"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/event_groups.s"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/list.s"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/queue.s"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/stream_buffer.s"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/tasks.s"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.o"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.i"
-	@echo "... Users/charlesmurphy/STM32CubeIDE/workspace_1.18.0/FreeRTOS/FreeRTOS/Source/timers.s"
 .PHONY : help
 
 
