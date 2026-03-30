@@ -100,7 +100,7 @@ const uint16_t GPIO_PIN[MAX_LED] = {GPIO_PIN_12,
   *     @arg LED5
   *     @arg LED6  
   */
-static void pUserTask_LED_On(Led_TypeDef Led)
+static void prvUserTask_LED_On(Led_TypeDef Led)
 {
     HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_SET); 
 }
@@ -114,7 +114,7 @@ static void pUserTask_LED_On(Led_TypeDef Led)
   *     @arg LED5
   *     @arg LED6 
   */
-static void pUserTask_LED_Off(Led_TypeDef Led)
+static void prvUserTask_LED_Off(Led_TypeDef Led)
 {
     HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
 }
@@ -128,9 +128,25 @@ static void pUserTask_LED_Off(Led_TypeDef Led)
   *     @arg LED5
   *     @arg LED6  
   */
-static void BSP_LED_Toggle(Led_TypeDef Led)
+static void prvUserTask_LED_Toggle(Led_TypeDef Led)
 {
     HAL_GPIO_TogglePin(GPIO_PORT[Led], GPIO_PIN[Led]);
+}
+
+static void prvUserTask_LED_Callback()
+{
+    prvUserTask_LED_On(LED6_BLUE);
+    
+    for( ; ; )
+    {
+        /* Delay for half the flash period then turn the LED on. */
+        vTaskDelay( (1000 / portTICK_PERIOD_MS) / ( TickType_t ) 2 );
+        prvUserTask_LED_Toggle(LED4_GREEN);
+
+        /* Delay for half the flash period then turn the LED off. */
+        vTaskDelay( (1000 / portTICK_PERIOD_MS) / ( TickType_t ) 2 );
+        prvUserTask_LED_Toggle(LED4_GREEN);
+    }
 }
 
 void UserTask_LED_Init()
@@ -139,23 +155,7 @@ void UserTask_LED_Init()
 
     for(led = 0; led < MAX_LED; led++)
     {
-        pUserTask_LED_Off(led);
-    }
-}
-
-static void pUserTask_LED_Callback()
-{
-    pUserTask_LED_On(LED6_BLUE);
-    
-    for( ; ; )
-    {
-        /* Delay for half the flash period then turn the LED on. */
-        vTaskDelay( (1000 / portTICK_PERIOD_MS) / ( TickType_t ) 2 );
-        BSP_LED_Toggle(LED4_GREEN);
-
-        /* Delay for half the flash period then turn the LED off. */
-        vTaskDelay( (1000 / portTICK_PERIOD_MS) / ( TickType_t ) 2 );
-        BSP_LED_Toggle(LED4_GREEN);
+        prvUserTask_LED_Off(led);
     }
 }
 
@@ -164,7 +164,7 @@ void UserTask_LEDFlash_Start()
     static StackType_t uxLEDTaskStack[ configMINIMAL_STACK_SIZE ];
     static StaticTask_t xLEDTaskTCB;
 
-    xTaskCreateStatic( pUserTask_LED_Callback,
+    xTaskCreateStatic( prvUserTask_LED_Callback,
                    "LED flash task",
              configMINIMAL_STACK_SIZE,
              NULL,

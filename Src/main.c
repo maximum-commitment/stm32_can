@@ -212,7 +212,7 @@ static void prvSetupHardware( void )
     /* Initialize all configured peripherals */
     MX_GPIO_Init();
 
-    /* Initialize CAN */
+    /* Low level initializations for user tasks */
     UserTask_CAN_Init();
 
     /* Ensure all priority bits are assigned as preemption priority bits. */
@@ -224,33 +224,6 @@ static void prvSetupHardware( void )
 
 void vApplicationTickHook( void )
 {
-}
-
-void EXTI9_5_IRQHandler( void )
-{
-    long lHigherPriorityTaskWoken = pdFALSE;
-
-    /* Only line 6 is enabled, so there is no need to test which line generated
-     * the interrupt. */
-    /* Note trigger param appears to be unused by driver, perhaps will be in future update */
-    /* Note callback pointer also unused, but this will likely be permanent */
-    EXTI_HandleTypeDef hexti = {.Line = LL_SYSCFG_EXTI_LINE6, .PendingCallback = NULL};
-    HAL_EXTI_ClearPending(&hexti, EXTI_TRIGGER_NONE /* param unused */);
-
-#ifdef COMPILEOUT_INITIAL_TEST_APP
-    /* This interrupt does nothing more than demonstrate how to synchronise a
-     * task with an interrupt.  First the handler releases a semaphore.
-     * lHigherPriorityTaskWoken has been initialised to zero. */
-    xSemaphoreGiveFromISR( xTestSemaphore, &lHigherPriorityTaskWoken );
-#endif
-
-    /* If there was a task that was blocked on the semaphore, and giving the
-     * semaphore caused the task to unblock, and the unblocked task has a priority
-     * higher than the currently executing task (the task that this interrupt
-     * interrupted), then lHigherPriorityTaskWoken will have been set to pdTRUE.
-     * Passing pdTRUE into the following macro call will cause this interrupt to
-     * return directly to the unblocked, higher priority, task. */
-    portEND_SWITCHING_ISR( lHigherPriorityTaskWoken );
 }
 
 void vApplicationIdleHook( void )

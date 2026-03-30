@@ -15,8 +15,20 @@
 #include "stm32f4xx_hal_can.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "queue.h"
 
 #include "UserTask_CAN.h"
+
+#define USERTASK_CAN_TXQUEUE_LENGTH 8U
+#define CAN_BUFFER_SIZE 8U
+struct 
+{
+  uint8_t Data[CAN_BUFFER_SIZE];
+} typedef UserTaskCANBufferType;
+
+static StaticQueue_t xStaticQueueTxBuffer;
+static UserTaskCANBufferType StaticQueue_TxCANBufferData[USERTASK_CAN_TXQUEUE_LENGTH];
+static xQueueHandle xQueueHandle_TxCANBuffer;
 
 CAN_HandleTypeDef hcan1;
 
@@ -99,7 +111,7 @@ CAN_RxHeaderTypeDef DemoRxHeader =
 
 uint8_t DemoRxMessage[8];
 
-static void CAN_Send_Message(const uint8_t *buf)
+static void prvCAN_Send_Message(const uint8_t *buf)
 {
     HAL_StatusTypeDef   HAL_Status;
     const CAN_TxHeaderTypeDef TxHeader = {
@@ -119,32 +131,62 @@ static void CAN_Send_Message(const uint8_t *buf)
     configASSERT(HAL_Status == HAL_OK);
 }
 
-static void CAN_LoopBackDemo()
+static void prvCAN_LoopBackDemo()
 {
   if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
   { 
     (void) HAL_CAN_GetRxMessage(&hcan1, 0, &DemoRxHeader, DemoRxMessage);
     if(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)!=0)
     {
-      CAN_Send_Message(DemoRxMessage);
+      prvCAN_Send_Message(DemoRxMessage);
     }
   }
 }
 
-static void pUserTask_CAN_Callback()
+static void prvUserTask_TxCAN_Callback()
 {   
+    UserTaskCANBufferType TxSend_Buffer;
+    uint32_t TxMailbox_FreeLevel;
+    BaseType_t TxReady;
     for( ; ; )
     {
-        CAN_LoopBackDemo();
+        TxReady = xQueueReceive( xQueueHandle_TxCANBuffer,
+                                 (void * const) &TxSend_Buffer,
+                                 5U);
+        
+        TxMailbox_FreeLevel = HAL_CAN_GetTxMailboxesFreeLevel(&hcan1);
+        if((TxMailbox_FreeLevel != 0U) && (TxReady == pdPASS))
+        {
+          prvCAN_Send_Message(DemoRxMessage);
+        }
+        configASSERT(TxMailbox_FreeLevel != 0U);
+    }
+}
 
-        vTaskDelay( (5 / portTICK_PERIOD_MS) );
+static void prvUserTask_RxCAN_Callback()
+{   
+    HAL_StatusTypeDef HAL_Status;
+    UserTaskCANBufferType RxQueue;
+    for( ; ; )
+    {
+      if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
+      {
+        HAL_Status = HAL_CAN_GetRxMessage(&hcan1, 0, &DemoRxHeader, DemoRxMessage);
+        configASSERT(HAL_Status == HAL_OK);
+        xQueueSend(xQueueHandle_TxCANBuffer, &RxQueue, portMAX_DELAY);
+      }
+      vTaskDelay( (5 / portTICK_PERIOD_MS) );
+      
     }
 }
 
 void UserTask_CAN_Start()
 {
-    static StackType_t uxLEDTaskStack[ configMINIMAL_STACK_SIZE ];
-    static StaticTask_t xLEDTaskTCB;
+    static StackType_t uxUSBTxTaskStack[ configMINIMAL_STACK_SIZE ];
+    static StaticTask_t xUSBTxTaskTCB;
+
+    static StackType_t uxUSBRxTaskStack[ configMINIMAL_STACK_SIZE ];
+    static StaticTask_t xUSBRxTaskTCB;
     HAL_StatusTypeDef HAL_Status;
 
     HAL_Status = HAL_CAN_ConfigFilter(&hcan1, &DemoRxFilter);
@@ -153,13 +195,27 @@ void UserTask_CAN_Start()
     HAL_Status = HAL_CAN_Start(&hcan1);
     configASSERT(HAL_Status == HAL_OK);
 
-    xTaskCreateStatic( pUserTask_CAN_Callback,
-                   "CAN loopback task",
-             configMINIMAL_STACK_SIZE,
-             NULL,
-             4,
-             (StackType_t * ) &uxLEDTaskStack,
-             (StaticTask_t *) &xLEDTaskTCB );
+    xQueueHandle_TxCANBuffer = xQueueGenericCreateStatic( USERTASK_CAN_TXQUEUE_LENGTH,
+                               sizeof(UserTaskCANBufferType),
+                               (uint8_t *) &StaticQueue_TxCANBufferData[0].Data,
+                               &xStaticQueueTxBuffer,
+                               0 /* appears to only be used by trace functions */ );
+
+    xTaskCreateStatic( prvUserTask_TxCAN_Callback,
+                       "Can transmit task",
+                       configMINIMAL_STACK_SIZE,
+                       NULL,
+                       2,
+                      (StackType_t * ) &uxUSBTxTaskStack,
+                      (StaticTask_t *) &xUSBTxTaskTCB );
+    
+    xTaskCreateStatic( prvUserTask_RxCAN_Callback,
+                       "CAN receive task",
+                       configMINIMAL_STACK_SIZE,
+                       NULL,
+                       2,
+                      (StackType_t * ) &uxUSBRxTaskStack,
+                      (StaticTask_t *) &xUSBRxTaskTCB );
 }
 
 void UserTask_CAN_Init()
