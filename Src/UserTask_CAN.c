@@ -10,14 +10,13 @@
 
 /* Kernel includes. */
 #include <string.h>
-#include "main.h"
 
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_can.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "stm32f4xx_hal_pwr.h"
-#include "stm32f4xx_ll_system.h"
-#include "stm32f4xx_hal_exti.h"
+#include "UserTask_CAN.h"
 
 CAN_HandleTypeDef hcan1;
 

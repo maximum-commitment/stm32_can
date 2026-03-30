@@ -15,9 +15,35 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_pwr.h"
 #include "stm32f4xx_ll_system.h"
 #include "stm32f4xx_hal_exti.h"
+
+#include "UserTask_LED.h"
+#include "UserTask_CAN.h"
+
+#define PC14_OSC32_IN_Pin GPIO_PIN_14
+#define PC14_OSC32_IN_GPIO_Port GPIOC
+#define PC15_OSC32_OUT_Pin GPIO_PIN_15
+#define PC15_OSC32_OUT_GPIO_Port GPIOC
+#define PH0_OSC_IN_Pin GPIO_PIN_0
+#define PH0_OSC_IN_GPIO_Port GPIOH
+#define PH1_OSC_OUT_Pin GPIO_PIN_1
+#define PH1_OSC_OUT_GPIO_Port GPIOH
+#define PDM_OUT_Pin GPIO_PIN_3
+#define PDM_OUT_GPIO_Port GPIOC
+#define BOOT1_Pin GPIO_PIN_2
+#define BOOT1_GPIO_Port GPIOB
+#define LD4_Pin GPIO_PIN_12
+#define LD4_GPIO_Port GPIOD
+#define LD3_Pin GPIO_PIN_13
+#define LD3_GPIO_Port GPIOD
+#define LD5_Pin GPIO_PIN_14
+#define LD5_GPIO_Port GPIOD
+#define LD6_Pin GPIO_PIN_15
+#define LD6_GPIO_Port GPIOD
+
 
 /*-----------------------------------------------------------*/
 
@@ -173,7 +199,6 @@ static StackType_t uxTimerTaskStack[ configMINIMAL_STACK_SIZE ];
 
 static void prvSetupHardware( void )
 {
-    HAL_StatusTypeDef   HAL_Status;
 
     /* Setup STM32 system (clock, PLL and Flash configuration) */
     SystemInit();
