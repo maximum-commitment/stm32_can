@@ -570,6 +570,30 @@ FreeRTOS/timers.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/freertos_kernel.dir/build.make CMakeFiles/freertos_kernel.dir/FreeRTOS/timers.c.s
 .PHONY : FreeRTOS/timers.c.s
 
+Src/UserTask_CAN.o: Src/UserTask_CAN.c.o
+.PHONY : Src/UserTask_CAN.o
+
+# target to build an object file
+Src/UserTask_CAN.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/UserTask_CAN.c.o
+.PHONY : Src/UserTask_CAN.c.o
+
+Src/UserTask_CAN.i: Src/UserTask_CAN.c.i
+.PHONY : Src/UserTask_CAN.i
+
+# target to preprocess a source file
+Src/UserTask_CAN.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/UserTask_CAN.c.i
+.PHONY : Src/UserTask_CAN.c.i
+
+Src/UserTask_CAN.s: Src/UserTask_CAN.c.s
+.PHONY : Src/UserTask_CAN.s
+
+# target to generate assembly for a file
+Src/UserTask_CAN.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/Src/UserTask_CAN.c.s
+.PHONY : Src/UserTask_CAN.c.s
+
 Src/UserTask_LED.o: Src/UserTask_LED.c.o
 .PHONY : Src/UserTask_LED.o
 
@@ -809,6 +833,9 @@ help:
 	@echo "... FreeRTOS/timers.o"
 	@echo "... FreeRTOS/timers.i"
 	@echo "... FreeRTOS/timers.s"
+	@echo "... Src/UserTask_CAN.o"
+	@echo "... Src/UserTask_CAN.i"
+	@echo "... Src/UserTask_CAN.s"
 	@echo "... Src/UserTask_LED.o"
 	@echo "... Src/UserTask_LED.i"
 	@echo "... Src/UserTask_LED.s"
