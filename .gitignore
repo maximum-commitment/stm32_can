@@ -5,3 +5,4 @@ STM32CubeIDE/.settings/
 stm32.elf
 objects.txt
 libfreertos_kernel.a
+*.cppcheck.txt

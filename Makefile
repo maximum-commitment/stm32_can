@@ -149,6 +149,19 @@ stm32.elf/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/stm32.elf.dir/build.make CMakeFiles/stm32.elf.dir/build
 .PHONY : stm32.elf/fast
 
+#=============================================================================
+# Target rules for targets named analysis
+
+# Build rule for target.
+analysis: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 analysis
+.PHONY : analysis
+
+# fast build rule for target.
+analysis/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/analysis.dir/build.make CMakeFiles/analysis.dir/build
+.PHONY : analysis/fast
+
 Drivers/BSP/Components/lis302dl/lis302dl.o: Drivers/BSP/Components/lis302dl/lis302dl.c.o
 .PHONY : Drivers/BSP/Components/lis302dl/lis302dl.o
 
@@ -718,6 +731,7 @@ help:
 	@echo "... codegen"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... analysis"
 	@echo "... freertos_kernel"
 	@echo "... stm32.elf"
 	@echo "... Drivers/BSP/Components/lis302dl/lis302dl.o"

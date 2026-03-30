@@ -37,13 +37,6 @@ typedef enum
   * @{
   */ 
 
-/** 
-* @brief  Define for STM32F4_DISCOVERY board  
-*/ 
-#if !defined (USE_STM32F4_DISCO)
- #define USE_STM32F4_DISCO
-#endif
-
 /** @defgroup STM32F4_DISCOVERY_LOW_LEVEL_LED STM32F4 DISCOVERY LOW LEVEL LED
   * @{
   */
@@ -99,11 +92,10 @@ static void prvSetupHardware( void );
 static void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_CAN1_Init(void);
-void Error_Handler(void);
-void BSP_LED_Init(Led_TypeDef Led);
-void BSP_LED_On(Led_TypeDef Led);
-void BSP_LED_Off(Led_TypeDef Led);
-void BSP_LED_Toggle(Led_TypeDef Led);
+static void BSP_LED_Init(Led_TypeDef Led);
+static void BSP_LED_On(Led_TypeDef Led);
+static void BSP_LED_Off(Led_TypeDef Led);
+static void BSP_LED_Toggle(Led_TypeDef Led);
 
 CAN_HandleTypeDef hcan1;
 
@@ -184,46 +176,29 @@ CAN_RxHeaderTypeDef DemoRxHeader =
 
 };
 
-uint8_t DemoTxMessage[8] = {11U, 22U, 33U, 44U, 55U, 66U, 77U, 88U};
 uint8_t DemoRxMessage[8];
 
-void CAN_Send_DemoMessage()
+static void CAN_Send_Message(const uint8_t *buf)
 {
-  const CAN_TxHeaderTypeDef TxHeader = {
-      .StdId=0x555U,
-      .ExtId=0x0U,
-      .IDE=CAN_ID_STD,
-      .RTR = 0x0U,
-      .DLC = 0x8U,
-      .TransmitGlobalTime = DISABLE};
+    HAL_StatusTypeDef   Hal_Status;
+    const CAN_TxHeaderTypeDef TxHeader = {
+        .StdId=0x555U,
+        .ExtId=0x0U,
+        .IDE=CAN_ID_STD,
+        .RTR = 0x0U,
+        .DLC = 0x8U,
+        .TransmitGlobalTime = DISABLE};
 
-  uint32_t TxMailbox = 0;
+    uint32_t TxMailbox = 0;
 
-  (void) HAL_CAN_AddTxMessage( &hcan1, 
-                               &TxHeader,
-                               (const uint8_t *) &DemoTxMessage, 
-                               &TxMailbox );
+    Hal_Status = HAL_CAN_AddTxMessage( &hcan1,
+                                       &TxHeader,
+                                       (const uint8_t *) buf,
+                                       &TxMailbox );
+    configASSERT(Hal_Status == HAL_OK);
 }
 
-void CAN_Send_Message(const uint8_t *buf)
-{
-  const CAN_TxHeaderTypeDef TxHeader = {
-      .StdId=0x555U,
-      .ExtId=0x0U,
-      .IDE=CAN_ID_STD,
-      .RTR = 0x0U,
-      .DLC = 0x8U,
-      .TransmitGlobalTime = DISABLE};
-
-  uint32_t TxMailbox = 0;
-
-  (void) HAL_CAN_AddTxMessage( &hcan1,
-                               &TxHeader,
-                               (const uint8_t *) buf,
-                               &TxMailbox );
-}
-
-void CAN_LoopBackDemo()
+static void CAN_LoopBackDemo()
 {
   if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
   { 
@@ -235,7 +210,7 @@ void CAN_LoopBackDemo()
   }
 }
 
-void Task_LEDFlash_Callback()
+static void Task_LEDFlash_Callback()
 {
     /* Queue a message for printing to say the task has started. */
     //vPrintDisplayMessage( &pcTaskStartMsg );
@@ -267,21 +242,21 @@ void Task_LEDFlash_Callback()
     }
 }
 
-void Task_LEDFlash_StartTask()
+static void Task_LEDFlash_StartTask()
 {
     static StackType_t uxLEDTaskStack[ configMINIMAL_STACK_SIZE ];
     static StaticTask_t xLEDTaskTCB;
 
     xTaskCreateStatic( Task_LEDFlash_Callback,
-    		           "LED flash task",
-					   configMINIMAL_STACK_SIZE,
-					   NULL,
-					   4,
-					   (StackType_t * ) &uxLEDTaskStack,
-					   (StaticTask_t *) &xLEDTaskTCB );
+                   "LED flash task",
+             configMINIMAL_STACK_SIZE,
+             NULL,
+             4,
+             (StackType_t * ) &uxLEDTaskStack,
+             (StaticTask_t *) &xLEDTaskTCB );
 }
 
-void Task_LEDFlash_SetupHw()
+static void Task_LEDFlash_SetupHw()
 {
     BSP_LED_Init(LED3);
     BSP_LED_Init(LED4);
@@ -298,22 +273,22 @@ void Task_LEDFlash_SetupHw()
   *     @arg LED5
   *     @arg LED6
   */
-void BSP_LED_Init(Led_TypeDef Led)
+static void BSP_LED_Init(Led_TypeDef Led)
 {
-  GPIO_InitTypeDef  GPIO_InitStruct;
-  
-  /* Enable the GPIO_LED Clock */
-  LEDx_GPIO_CLK_ENABLE(Led);
+    GPIO_InitTypeDef  GPIO_InitStruct;
 
-  /* Configure the GPIO_LED pin */
-  GPIO_InitStruct.Pin = GPIO_PIN[Led];
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
-  
-  HAL_GPIO_Init(GPIO_PORT[Led], &GPIO_InitStruct);
-  
-  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
+    /* Enable the GPIO_LED Clock */
+    LEDx_GPIO_CLK_ENABLE(Led);
+
+    /* Configure the GPIO_LED pin */
+    GPIO_InitStruct.Pin = GPIO_PIN[Led];
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+
+    HAL_GPIO_Init(GPIO_PORT[Led], &GPIO_InitStruct);
+
+    HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
 }
 
 /**
@@ -325,9 +300,9 @@ void BSP_LED_Init(Led_TypeDef Led)
   *     @arg LED5
   *     @arg LED6  
   */
-void BSP_LED_On(Led_TypeDef Led)
+static void BSP_LED_On(Led_TypeDef Led)
 {
-  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_SET); 
+    HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_SET); 
 }
 
 /**
@@ -339,9 +314,9 @@ void BSP_LED_On(Led_TypeDef Led)
   *     @arg LED5
   *     @arg LED6 
   */
-void BSP_LED_Off(Led_TypeDef Led)
+static void BSP_LED_Off(Led_TypeDef Led)
 {
-  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
+    HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
 }
 
 /**
@@ -353,9 +328,9 @@ void BSP_LED_Off(Led_TypeDef Led)
   *     @arg LED5
   *     @arg LED6  
   */
-void BSP_LED_Toggle(Led_TypeDef Led)
+static void BSP_LED_Toggle(Led_TypeDef Led)
 {
-  HAL_GPIO_TogglePin(GPIO_PORT[Led], GPIO_PIN[Led]);
+    HAL_GPIO_TogglePin(GPIO_PORT[Led], GPIO_PIN[Led]);
 }
 
 /**
@@ -365,34 +340,32 @@ void BSP_LED_Toggle(Led_TypeDef Led)
   */
 static void MX_CAN1_Init(void)
 {
+    HAL_StatusTypeDef Hal_Status;
 
-  /* USER CODE BEGIN CAN1_Init 0 */
+    /* USER CODE BEGIN CAN1_Init 0 */
 
-  /* USER CODE END CAN1_Init 0 */
+    /* USER CODE END CAN1_Init 0 */
 
-  /* USER CODE BEGIN CAN1_Init 1 */
+    /* USER CODE BEGIN CAN1_Init 1 */
 
-  /* USER CODE END CAN1_Init 1 */
-  hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 14;
-  hcan1.Init.Mode = CAN_MODE_NORMAL;
-  hcan1.Init.SyncJumpWidth = CAN_SJW_2TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_2TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
-  hcan1.Init.TimeTriggeredMode = DISABLE;
-  hcan1.Init.AutoBusOff = DISABLE;
-  hcan1.Init.AutoWakeUp = DISABLE;
-  hcan1.Init.AutoRetransmission = DISABLE;
-  hcan1.Init.ReceiveFifoLocked = DISABLE;
-  hcan1.Init.TransmitFifoPriority = DISABLE;
-  if (HAL_CAN_Init(&hcan1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN CAN1_Init 2 */
+    /* USER CODE END CAN1_Init 1 */
+    hcan1.Instance = CAN1;
+    hcan1.Init.Prescaler = 14;
+    hcan1.Init.Mode = CAN_MODE_NORMAL;
+    hcan1.Init.SyncJumpWidth = CAN_SJW_2TQ;
+    hcan1.Init.TimeSeg1 = CAN_BS1_2TQ;
+    hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
+    hcan1.Init.TimeTriggeredMode = DISABLE;
+    hcan1.Init.AutoBusOff = DISABLE;
+    hcan1.Init.AutoWakeUp = DISABLE;
+    hcan1.Init.AutoRetransmission = DISABLE;
+    hcan1.Init.ReceiveFifoLocked = DISABLE;
+    hcan1.Init.TransmitFifoPriority = DISABLE;
+    Hal_Status = HAL_CAN_Init(&hcan1);
+    configASSERT(Hal_Status == HAL_OK);
+    /* USER CODE BEGIN CAN1_Init 2 */
 
-  /* USER CODE END CAN1_Init 2 */
-
+    /* USER CODE END CAN1_Init 2 */
 }
 
 /**
@@ -402,45 +375,45 @@ static void MX_CAN1_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  /* USER CODE BEGIN MX_GPIO_Init_1 */
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    /* USER CODE BEGIN MX_GPIO_Init_1 */
 
-  /* USER CODE END MX_GPIO_Init_1 */
+    /* USER CODE END MX_GPIO_Init_1 */
 
-  /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
+    /* GPIO Ports Clock Enable */
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOH_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOD_CLK_ENABLE();
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_RESET);
+    /*Configure GPIO pin Output Level */
+    HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PDM_OUT_Pin */
-  GPIO_InitStruct.Pin = PDM_OUT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
-  HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : PDM_OUT_Pin */
+    GPIO_InitStruct.Pin = PDM_OUT_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+    HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : BOOT1_Pin */
-  GPIO_InitStruct.Pin = BOOT1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
+    /*Configure GPIO pin : BOOT1_Pin */
+    GPIO_InitStruct.Pin = BOOT1_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(BOOT1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin */
-  GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+    /*Configure GPIO pins : LD4_Pin LD3_Pin LD5_Pin LD6_Pin */
+    GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN MX_GPIO_Init_2 */
+    /* USER CODE BEGIN MX_GPIO_Init_2 */
 
-  /* USER CODE END MX_GPIO_Init_2 */
+    /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /**
@@ -449,43 +422,39 @@ static void MX_GPIO_Init(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+    HAL_StatusTypeDef Hal_Status;
 
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+    /** Configure the main internal regulator output voltage
+     */
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initializes the RCC Oscillators according to the specified parameters
+     * in the RCC_OscInitTypeDef structure.
+     */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 8;
+    RCC_OscInitStruct.PLL.PLLN = 336;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 7;
+    Hal_Status = HAL_RCC_OscConfig(&RCC_OscInitStruct);
+    configASSERT(Hal_Status == HAL_OK);
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
-  {
-    Error_Handler();
-  }
+    /** Initializes the CPU, AHB and APB buses clocks
+     */
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                                |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+    Hal_Status = HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
+    configASSERT(Hal_Status == HAL_OK);
 }
 
 int main( void )
@@ -493,14 +462,12 @@ int main( void )
     /* Configure the hardware ready to run the test. */
     prvSetupHardware();
 
-    BSP_LED_On(LED4);
+    BSP_LED_Off(LED4);
     BSP_LED_On(LED3);
-    BSP_LED_On(LED5);
-    BSP_LED_On(LED6);
 
     Task_LEDFlash_StartTask();
 
-	vTaskStartScheduler();
+    vTaskStartScheduler();
 
     /* If all is well, the scheduler will now be running, and the following line
      * will never be reached.  If the following line does execute, then there was
@@ -547,22 +514,23 @@ void vApplicationGetTimerTaskMemory( StaticTask_t ** ppxTimerTaskTCBBuffer,
 static StaticTask_t xTimerTaskTCB;
 static StackType_t uxTimerTaskStack[ configMINIMAL_STACK_SIZE ];
 
-	/* Pass out a pointer to the StaticTask_t structure in which the Idle task's
-	state will be stored. */
-	*ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
+  /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
+  state will be stored. */
+  *ppxTimerTaskTCBBuffer = &xTimerTaskTCB;
 
-	/* Pass out the array that will be used as the Idle task's stack. */
-	*ppxTimerTaskStackBuffer = uxTimerTaskStack;
+  /* Pass out the array that will be used as the Idle task's stack. */
+  *ppxTimerTaskStackBuffer = uxTimerTaskStack;
 
-	/* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
-	Note that, as the array is necessarily of type StackType_t,
-	configMINIMAL_STACK_SIZE is specified in words, not bytes. */
-	*pulTimerTaskStackSize = configMINIMAL_STACK_SIZE;
+  /* Pass out the size of the array pointed to by *ppxTimerTaskStackBuffer.
+  Note that, as the array is necessarily of type StackType_t,
+  configMINIMAL_STACK_SIZE is specified in words, not bytes. */
+  *pulTimerTaskStackSize = configMINIMAL_STACK_SIZE;
 }
 
 static void prvSetupHardware( void )
 {
-  
+    HAL_StatusTypeDef   Hal_Status;
+
     /* Setup STM32 system (clock, PLL and Flash configuration) */
     SystemInit();
 
@@ -589,8 +557,12 @@ static void prvSetupHardware( void )
 
     Task_LEDFlash_SetupHw();
 
-    HAL_CAN_ConfigFilter(&hcan1, &DemoRxFilter);
-    HAL_CAN_Start(&hcan1);
+
+    Hal_Status = HAL_CAN_ConfigFilter(&hcan1, &DemoRxFilter);
+    configASSERT(Hal_Status == HAL_OK);
+
+    Hal_Status = HAL_CAN_Start(&hcan1);
+    configASSERT(Hal_Status == HAL_OK);
 }
 /*-----------------------------------------------------------*/
 
@@ -654,34 +626,3 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask,
     {
     }
 }
-/*-----------------------------------------------------------*/
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
-}
-#ifdef USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
