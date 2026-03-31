@@ -216,6 +216,8 @@ void UserTask_CAN_Start()
                        2,
                       (StackType_t * ) &uxUSBRxTaskStack,
                       (StaticTask_t *) &xUSBRxTaskTCB );
+    
+    HAL_CAN_ActivateNotification(&hcan1, 1 << 1);
 }
 
 void UserTask_CAN_Init()
@@ -243,7 +245,24 @@ void UserTask_CAN_Init()
     hcan1.Init.TransmitFifoPriority = DISABLE;
     HAL_Status = HAL_CAN_Init(&hcan1);
     configASSERT(HAL_Status == HAL_OK);
+
+    /* CAN1 interrupt Init */
+    HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
     /* USER CODE BEGIN CAN1_Init 2 */
 
     /* USER CODE END CAN1_Init 2 */
+}
+volatile uint32_t rxcanirq_cnt;
+void CAN1_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX0_IRQn 0 */
+
+  /* USER CODE END CAN1_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  HAL_CAN_GetRxMessage(&hcan1, 0, &DemoRxHeader, DemoRxMessage);
+  rxcanirq_cnt++;
+  /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
+
+  /* USER CODE END CAN1_RX0_IRQn 1 */
 }

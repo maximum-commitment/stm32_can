@@ -218,6 +218,9 @@ static void prvSetupHardware( void )
     /* Ensure all priority bits are assigned as preemption priority bits. */
     HAL_NVIC_SetPriorityGrouping( NVIC_PRIORITYGROUP_4 );
 
+    HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+
     UserTask_LED_Init();
 }
 /*-----------------------------------------------------------*/
