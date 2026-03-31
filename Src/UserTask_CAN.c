@@ -19,7 +19,10 @@
 
 #include "UserTask_CAN.h"
 
-#define USERTASK_CAN_TXQUEUE_LENGTH 8U
+
+#define USERTASK_CAN_RXQUEUE_LENGTH 8U
+#define USERTASK_CAN_TXQUEUE_LENGTH USERTASK_CAN_RXQUEUE_LENGTH
+
 #define CAN_BUFFER_SIZE 8U
 struct 
 {
@@ -29,6 +32,10 @@ struct
 static StaticQueue_t xStaticQueueTxBuffer;
 static UserTaskCANBufferType StaticQueue_TxCANBufferData[USERTASK_CAN_TXQUEUE_LENGTH];
 static xQueueHandle xQueueHandle_TxCANBuffer;
+
+static StaticQueue_t xStaticQueueRxBuffer;
+static UserTaskCANBufferType StaticQueue_RxCANBufferData[USERTASK_CAN_RXQUEUE_LENGTH];
+static xQueueHandle xQueueHandle_RxCANBuffer;
 
 CAN_HandleTypeDef hcan1;
 
@@ -131,18 +138,6 @@ static void prvCAN_Send_Message(const uint8_t *buf)
     configASSERT(HAL_Status == HAL_OK);
 }
 
-static void prvCAN_LoopBackDemo()
-{
-  if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
-  { 
-    (void) HAL_CAN_GetRxMessage(&hcan1, 0, &DemoRxHeader, DemoRxMessage);
-    if(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)!=0)
-    {
-      prvCAN_Send_Message(DemoRxMessage);
-    }
-  }
-}
-
 static void prvUserTask_TxCAN_Callback()
 {   
     UserTaskCANBufferType TxSend_Buffer;
@@ -152,31 +147,39 @@ static void prvUserTask_TxCAN_Callback()
     {
         TxReady = xQueueReceive( xQueueHandle_TxCANBuffer,
                                  (void * const) &TxSend_Buffer,
-                                 5U);
+                                 1000 / portTICK_PERIOD_MS);
         
         TxMailbox_FreeLevel = HAL_CAN_GetTxMailboxesFreeLevel(&hcan1);
-        if((TxMailbox_FreeLevel != 0U) && (TxReady == pdPASS))
-        {
-          prvCAN_Send_Message(DemoRxMessage);
-        }
         configASSERT(TxMailbox_FreeLevel != 0U);
+
+        if((TxReady == pdPASS))
+        {
+            prvCAN_Send_Message(DemoRxMessage);
+        }
+        else
+        {
+            uint8_t buf[8] = {1,2,3,4,5,6,7,8};
+            prvCAN_Send_Message(buf);
+        }
     }
 }
 
 static void prvUserTask_RxCAN_Callback()
-{   
-    HAL_StatusTypeDef HAL_Status;
+{
     UserTaskCANBufferType RxQueue;
+    BaseType_t messageReceived;
+    BaseType_t higherTaskWoken = pdFALSE;
     for( ; ; )
     {
-      if(HAL_CAN_GetRxFifoFillLevel(&hcan1, 0) > 0)
-      {
-        HAL_Status = HAL_CAN_GetRxMessage(&hcan1, 0, &DemoRxHeader, DemoRxMessage);
-        configASSERT(HAL_Status == HAL_OK);
-        xQueueSend(xQueueHandle_TxCANBuffer, &RxQueue, portMAX_DELAY);
-      }
-      vTaskDelay( (5 / portTICK_PERIOD_MS) );
-      
+        messageReceived = xQueueReceiveFromISR(xQueueHandle_RxCANBuffer, &RxQueue, &higherTaskWoken);
+        if(messageReceived == pdPASS)
+        {
+            xQueueSend(xQueueHandle_TxCANBuffer, &RxQueue, portMAX_DELAY);
+        }
+        else
+        {
+            /* Future: go to sleep */
+        }
     }
 }
 
@@ -201,6 +204,12 @@ void UserTask_CAN_Start()
                                &xStaticQueueTxBuffer,
                                0 /* appears to only be used by trace functions */ );
 
+    xQueueHandle_RxCANBuffer = xQueueGenericCreateStatic( USERTASK_CAN_RXQUEUE_LENGTH,
+                               sizeof(UserTaskCANBufferType),
+                               (uint8_t *) &StaticQueue_RxCANBufferData[0].Data,
+                               &xStaticQueueRxBuffer,
+                               0 /* appears to only be used by trace functions */ );
+
     xTaskCreateStatic( prvUserTask_TxCAN_Callback,
                        "Can transmit task",
                        configMINIMAL_STACK_SIZE,
@@ -216,6 +225,8 @@ void UserTask_CAN_Start()
                        2,
                       (StackType_t * ) &uxUSBRxTaskStack,
                       (StaticTask_t *) &xUSBRxTaskTCB );
+    
+    HAL_CAN_ActivateNotification(&hcan1, 1 << 1);
 }
 
 void UserTask_CAN_Init()
@@ -243,7 +254,23 @@ void UserTask_CAN_Init()
     hcan1.Init.TransmitFifoPriority = DISABLE;
     HAL_Status = HAL_CAN_Init(&hcan1);
     configASSERT(HAL_Status == HAL_OK);
-    /* USER CODE BEGIN CAN1_Init 2 */
 
-    /* USER CODE END CAN1_Init 2 */
+    // /* CAN1 interrupt Init */
+    // HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 16, 16);
+    // HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+    // /* USER CODE BEGIN CAN1_Init 2 */
+
+    // /* USER CODE END CAN1_Init 2 */
+}
+volatile uint32_t rxcanirq_cnt;
+void CAN1_RX0_IRQHandler(void)
+{
+  HAL_StatusTypeDef HAL_Status;
+  BaseType_t higherTaskWoken = pdFALSE;
+
+  HAL_CAN_IRQHandler(&hcan1);
+  HAL_Status = HAL_CAN_GetRxMessage(&hcan1, 0, &DemoRxHeader, DemoRxMessage);
+  configASSERT(HAL_Status != HAL_ERROR);
+  xQueueSendFromISR(xQueueHandle_RxCANBuffer, DemoRxMessage, &higherTaskWoken);
+  rxcanirq_cnt++;
 }
